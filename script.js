@@ -17,6 +17,7 @@ const chatHistory = document.getElementById('chatHistory');
 const examplePrompts = document.querySelectorAll('.example-prompt');
 const voiceBtn = document.getElementById('voiceBtn');
 const textToSpeechToggle = document.getElementById('textToSpeechToggle');
+const logoHome = document.getElementById('logoHome');
 
 // Voice settings elements
 const voiceSelect = document.getElementById('voiceSelect');
