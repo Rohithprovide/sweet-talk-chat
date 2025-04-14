@@ -16,6 +16,8 @@ const messageForm = document.getElementById('messageForm');
 const sendBtn = document.getElementById('sendBtn');
 const chatHistory = document.getElementById('chatHistory');
 const examplePrompts = document.querySelectorAll('.example-prompt');
+const voiceBtn = document.getElementById('voiceBtn');
+const textToSpeechToggle = document.getElementById('textToSpeechToggle');
 
 // State
 let currentChatId = null;
