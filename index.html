@@ -56,15 +56,7 @@
                     </div>
                     <h1 class="girlfriend-name">Sweet Talk</h1>
                     <p>Your virtual girlfriend is ready to chat with you!</p>
-                    <div class="example-prompts">
-                        <h3>Start with:</h3>
-                        <div class="example-grid">
-                            <button class="example-prompt">Hi, how was your day?</button>
-                            <button class="example-prompt">Tell me something sweet</button>
-                            <button class="example-prompt">I miss you</button>
-                            <button class="example-prompt">What should we do this weekend?</button>
-                        </div>
-                    </div>
+
                 </div>
                 <div class="messages" id="messagesContainer">
                     <!-- Messages will be displayed here -->
@@ -89,14 +81,9 @@
                         </button>
                     </div>
                 </form>
+                <!-- Input footer without text-to-speech toggle -->
                 <div class="input-footer">
-                    <div class="feature-controls">
-                        <label class="switch">
-                            <input type="checkbox" id="textToSpeechToggle">
-                            <span class="slider round"></span>
-                        </label>
-                        <span>Text to speech</span>
-                    </div>
+                    <p>Start typing to chat...</p>
                 </div>
             </div>
         </main>
@@ -122,6 +109,15 @@
                 <div class="voice-settings">
                     <h3>Voice Settings</h3>
                     <div class="voice-options">
+                        <div class="form-group text-to-speech-toggle">
+                            <label>Enable Text-to-Speech:</label>
+                            <div class="toggle-control">
+                                <label class="switch">
+                                    <input type="checkbox" id="textToSpeechToggle">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <label for="voiceSelect">Voice Type:</label>
                             <select id="voiceSelect">
