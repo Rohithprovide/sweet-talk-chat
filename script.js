@@ -46,7 +46,11 @@ const KEYS = {
     THEME: 'theme',
     CHATS: 'chats',
     MODEL: 'model',
-    TEXT_TO_SPEECH: 'text_to_speech'
+    TEXT_TO_SPEECH: 'text_to_speech',
+    VOICE_PITCH: 'voice_pitch',
+    VOICE_RATE: 'voice_rate',
+    VOICE_VOLUME: 'voice_volume',
+    VOICE_NAME: 'voice_name'
 };
 
 // Initialize app
