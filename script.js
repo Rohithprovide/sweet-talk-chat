@@ -724,15 +724,32 @@ function addMessageToDOM(role, content) {
             speechSynthesis.cancel(); // Stop any current speech
             const utterance = new SpeechSynthesisUtterance(plainText);
             
-            // Set voice (optional)
+            // Get all available voices
             const voices = speechSynthesis.getVoices();
-            const femaleVoice = voices.find(voice => voice.name.includes('female') || voice.name.includes('girl'));
-            if (femaleVoice) {
-                utterance.voice = femaleVoice;
+            
+            // Set voice based on saved preference
+            const savedVoiceName = localStorage.getItem(KEYS.VOICE_NAME);
+            if (savedVoiceName) {
+                // Try to find the saved voice
+                const savedVoice = voices.find(voice => voice.name === savedVoiceName);
+                if (savedVoice) {
+                    utterance.voice = savedVoice;
+                }
+            } else {
+                // Fall back to auto-selecting a female voice
+                const femaleVoice = voices.find(voice => 
+                    voice.name.toLowerCase().includes('female') || 
+                    voice.name.toLowerCase().includes('girl') ||
+                    voice.name.toLowerCase().includes('woman'));
+                if (femaleVoice) {
+                    utterance.voice = femaleVoice;
+                }
             }
             
-            utterance.pitch = 1.1;
-            utterance.rate = 1.0;
+            // Apply custom voice settings
+            utterance.pitch = parseFloat(localStorage.getItem(KEYS.VOICE_PITCH) || '1.0');
+            utterance.rate = parseFloat(localStorage.getItem(KEYS.VOICE_RATE) || '1.0');
+            utterance.volume = parseFloat(localStorage.getItem(KEYS.VOICE_VOLUME) || '1.0');
             
             speechSynthesis.speak(utterance);
             
