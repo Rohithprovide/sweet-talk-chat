@@ -5,7 +5,6 @@ const settingsBtn = document.getElementById('settingsBtn');
 const saveApiKey = document.getElementById('saveApiKey');
 const apiKeyInput = document.getElementById('apiKeyInput');
 const toggleApiKeyVisibility = document.getElementById('toggleApiKeyVisibility');
-const modelSelect = document.getElementById('modelSelect');
 const themeToggle = document.getElementById('themeToggle');
 const newChatBtn = document.getElementById('newChatBtn');
 const chatContainer = document.getElementById('chatContainer');
@@ -18,6 +17,15 @@ const chatHistory = document.getElementById('chatHistory');
 const examplePrompts = document.querySelectorAll('.example-prompt');
 const voiceBtn = document.getElementById('voiceBtn');
 const textToSpeechToggle = document.getElementById('textToSpeechToggle');
+
+// Voice settings elements
+const voiceSelect = document.getElementById('voiceSelect');
+const voicePitch = document.getElementById('voicePitch');
+const voiceRate = document.getElementById('voiceRate');
+const voiceVolume = document.getElementById('voiceVolume');
+const pitchValue = document.getElementById('pitchValue');
+const rateValue = document.getElementById('rateValue');
+const volumeValue = document.getElementById('volumeValue');
 
 // State
 let currentChatId = null;
@@ -63,9 +71,6 @@ function init() {
     
     // Load API key if saved
     loadApiKey();
-    
-    // Load the selected model
-    loadModel();
     
     // Load conversations from local storage
     loadConversations();
@@ -117,15 +122,30 @@ function setupEventListeners() {
         }
     });
     
-    // Save API Key
+    // Save API Key and Voice Settings
     saveApiKey.addEventListener('click', () => {
         const key = apiKeyInput.value.trim();
         if (key) {
             localStorage.setItem(KEYS.API_KEY, key);
-            const model = modelSelect.value;
-            localStorage.setItem(KEYS.MODEL, model);
+            
+            // Save voice settings
+            if (voicePitch) {
+                localStorage.setItem(KEYS.VOICE_PITCH, voicePitch.value);
+            }
+            if (voiceRate) {
+                localStorage.setItem(KEYS.VOICE_RATE, voiceRate.value);
+            }
+            if (voiceVolume) {
+                localStorage.setItem(KEYS.VOICE_VOLUME, voiceVolume.value);
+            }
+            if (voiceSelect && voiceSelect.value !== 'auto') {
+                localStorage.setItem(KEYS.VOICE_NAME, voiceSelect.value);
+            } else {
+                localStorage.removeItem(KEYS.VOICE_NAME);
+            }
+            
             apiKeyModal.classList.remove('show');
-            showToast('API key saved successfully!');
+            showToast('Settings saved successfully!');
         } else {
             showToast('Please enter a valid API key', 'error');
         }
@@ -148,10 +168,59 @@ function setupEventListeners() {
         });
     });
     
-    // Model selection change
-    modelSelect.addEventListener('change', () => {
-        localStorage.setItem(KEYS.MODEL, modelSelect.value);
-    });
+    // Voice settings events
+    if (voiceSelect) {
+        // Populate voice select options once voices are loaded
+        speechSynthesis.onvoiceschanged = () => {
+            populateVoiceOptions();
+        };
+        
+        // Call immediately in case voices are already loaded
+        populateVoiceOptions();
+        
+        voiceSelect.addEventListener('change', () => {
+            localStorage.setItem(KEYS.VOICE_NAME, voiceSelect.value);
+        });
+    }
+    
+    // Voice pitch control
+    if (voicePitch && pitchValue) {
+        // Load saved pitch or set default
+        const savedPitch = localStorage.getItem(KEYS.VOICE_PITCH) || '1.0';
+        voicePitch.value = savedPitch;
+        pitchValue.textContent = savedPitch;
+        
+        voicePitch.addEventListener('input', () => {
+            pitchValue.textContent = voicePitch.value;
+            localStorage.setItem(KEYS.VOICE_PITCH, voicePitch.value);
+        });
+    }
+    
+    // Voice rate control
+    if (voiceRate && rateValue) {
+        // Load saved rate or set default
+        const savedRate = localStorage.getItem(KEYS.VOICE_RATE) || '1.0';
+        voiceRate.value = savedRate;
+        rateValue.textContent = savedRate;
+        
+        voiceRate.addEventListener('input', () => {
+            rateValue.textContent = voiceRate.value;
+            localStorage.setItem(KEYS.VOICE_RATE, voiceRate.value);
+        });
+    }
+    
+    // Voice volume control
+    if (voiceVolume && volumeValue) {
+        // Load saved volume or set default
+        const savedVolume = localStorage.getItem(KEYS.VOICE_VOLUME) || '1.0';
+        voiceVolume.value = savedVolume;
+        volumeValue.textContent = savedVolume;
+        
+        voiceVolume.addEventListener('input', () => {
+            volumeValue.textContent = voiceVolume.value;
+            localStorage.setItem(KEYS.VOICE_VOLUME, voiceVolume.value);
+        });
+    }
     
     // Voice input button
     if (recognition) {
@@ -235,11 +304,87 @@ function loadApiKey() {
     }
 }
 
-function loadModel() {
-    const savedModel = localStorage.getItem(KEYS.MODEL);
-    if (savedModel) {
-        modelSelect.value = savedModel;
+function loadVoiceSettings() {
+    // This function will be replaced by individual loading in the event setup
+}
+
+// Function to populate voice selection dropdown
+function populateVoiceOptions() {
+    if (!voiceSelect) return;
+    
+    // Clear existing options except the first one
+    while (voiceSelect.options.length > 1) {
+        voiceSelect.remove(1);
     }
+    
+    // Get all available voices
+    const voices = speechSynthesis.getVoices();
+    
+    // Group voices by language
+    const voicesByLang = {};
+    voices.forEach(voice => {
+        const lang = voice.lang.split('-')[0];
+        if (!voicesByLang[lang]) {
+            voicesByLang[lang] = [];
+        }
+        voicesByLang[lang].push(voice);
+    });
+    
+    // Create optgroup for each language and add voices
+    Object.keys(voicesByLang).sort().forEach(lang => {
+        const langVoices = voicesByLang[lang];
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = getLangName(lang);
+        
+        langVoices.forEach(voice => {
+            const option = document.createElement('option');
+            option.value = voice.name;
+            option.textContent = `${voice.name} (${voice.lang})`;
+            // Check if this is a female voice
+            if (voice.name.toLowerCase().includes('female') || 
+                voice.name.toLowerCase().includes('girl') || 
+                voice.name.toLowerCase().includes('woman')) {
+                option.dataset.female = 'true';
+            }
+            optgroup.appendChild(option);
+        });
+        
+        voiceSelect.appendChild(optgroup);
+    });
+    
+    // Set the saved voice if exists
+    const savedVoice = localStorage.getItem(KEYS.VOICE_NAME);
+    if (savedVoice) {
+        // Check if the saved voice exists in the current list
+        for (let i = 0; i < voiceSelect.options.length; i++) {
+            if (voiceSelect.options[i].value === savedVoice) {
+                voiceSelect.value = savedVoice;
+                break;
+            }
+        }
+    }
+}
+
+// Helper function to get language name from code
+function getLangName(langCode) {
+    const langNames = {
+        'en': 'English',
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
+        'it': 'Italian',
+        'ja': 'Japanese',
+        'ko': 'Korean',
+        'zh': 'Chinese',
+        'ru': 'Russian',
+        'pt': 'Portuguese',
+        'nl': 'Dutch',
+        'ar': 'Arabic',
+        'hi': 'Hindi',
+        'tr': 'Turkish'
+    };
+    
+    return langNames[langCode] || langCode;
 }
 
 // Chat management functions
@@ -859,17 +1004,32 @@ function speakText(text) {
     // Create a new utterance
     const utterance = new SpeechSynthesisUtterance(text);
     
-    // Set voice (optional)
+    // Get all available voices
     const voices = speechSynthesis.getVoices();
-    const femaleVoice = voices.find(voice => voice.name.includes('female') || voice.name.includes('girl'));
-    if (femaleVoice) {
-        utterance.voice = femaleVoice;
+    
+    // Set voice based on saved preference
+    const savedVoiceName = localStorage.getItem(KEYS.VOICE_NAME);
+    if (savedVoiceName) {
+        // Try to find the saved voice
+        const savedVoice = voices.find(voice => voice.name === savedVoiceName);
+        if (savedVoice) {
+            utterance.voice = savedVoice;
+        }
+    } else {
+        // Fall back to auto-selecting a female voice
+        const femaleVoice = voices.find(voice => 
+            voice.name.toLowerCase().includes('female') || 
+            voice.name.toLowerCase().includes('girl') ||
+            voice.name.toLowerCase().includes('woman'));
+        if (femaleVoice) {
+            utterance.voice = femaleVoice;
+        }
     }
     
-    // Adjust settings
-    utterance.pitch = 1.1;
-    utterance.rate = 1.0;
-    utterance.volume = 1.0;
+    // Adjust settings based on saved preferences
+    utterance.pitch = parseFloat(localStorage.getItem(KEYS.VOICE_PITCH) || '1.0');
+    utterance.rate = parseFloat(localStorage.getItem(KEYS.VOICE_RATE) || '1.0');
+    utterance.volume = parseFloat(localStorage.getItem(KEYS.VOICE_VOLUME) || '1.0');
     
     // Speak
     speechSynthesis.speak(utterance);
