@@ -41,7 +41,7 @@
                 <div class="api-key-container">
                     <button class="settings-btn" id="settingsBtn">
                         <i class="fas fa-gear"></i>
-                        <span>API Settings</span>
+                        <span>Settings</span>
                     </button>
                 </div>
             </div>
@@ -106,7 +106,7 @@
     <div class="modal" id="apiKeyModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>API Settings</h2>
+                <h2>Settings</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
@@ -119,13 +119,29 @@
                     </button>
                 </div>
                 <button class="save-api-key" id="saveApiKey">Save Key</button>
-                <div class="model-selection">
-                    <label for="modelSelect">Model:</label>
-                    <select id="modelSelect">
-                        <option value="gemini-1.5-pro">gemini-1.5-pro</option>
-                        <option value="gemini-1.5-flash">gemini-1.5-flash</option>
-                        <option value="gemini-pro">gemini-pro</option>
-                    </select>
+                <div class="voice-settings">
+                    <h3>Voice Settings</h3>
+                    <div class="voice-options">
+                        <div class="form-group">
+                            <label for="voiceSelect">Voice Type:</label>
+                            <select id="voiceSelect">
+                                <option value="auto">Auto-select Female</option>
+                                <!-- Voice options will be populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="voicePitch">Pitch: <span id="pitchValue">1.0</span></label>
+                            <input type="range" id="voicePitch" min="0.5" max="2.0" step="0.1" value="1.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceRate">Speed: <span id="rateValue">1.0</span></label>
+                            <input type="range" id="voiceRate" min="0.5" max="2.0" step="0.1" value="1.0">
+                        </div>
+                        <div class="form-group">
+                            <label for="voiceVolume">Volume: <span id="volumeValue">1.0</span></label>
+                            <input type="range" id="voiceVolume" min="0.1" max="1.0" step="0.1" value="1.0">
+                        </div>
+                    </div>
                 </div>
                 <div class="form-group persona-config">
                     <label for="personaInput">Girlfriend Personality (optional):</label>
