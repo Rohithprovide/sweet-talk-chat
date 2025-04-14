@@ -744,8 +744,12 @@ input:checked + .slider:before {
     border-radius: var(--border-radius-md);
     max-width: 500px;
     width: 100%;
+    max-height: 90vh;
     box-shadow: var(--shadow-lg);
     animation: slideIn 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-header {
@@ -776,6 +780,8 @@ input:checked + .slider:before {
 
 .modal-body {
     padding: var(--spacing-md);
+    overflow-y: auto;
+    max-height: calc(90vh - 60px);
 }
 
 .modal-body p {
@@ -1045,7 +1051,7 @@ input:checked + .slider:before {
 
 /* Voice Settings Styles */
 .voice-settings {
-    margin: var(--spacing-lg) 0;
+    margin: var(--spacing-md) 0;
     padding: var(--spacing-md);
     background-color: rgba(255, 107, 158, 0.05);
     border-radius: var(--border-radius-md);
@@ -1053,17 +1059,18 @@ input:checked + .slider:before {
 }
 
 .voice-settings h3 {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-sm);
     color: var(--accent);
     font-size: 1rem;
     border-bottom: 1px solid var(--border);
     padding-bottom: var(--spacing-xs);
+    text-align: center;
 }
 
 .voice-options {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md);
+    gap: var(--spacing-sm);
 }
 
 input[type="range"] {
