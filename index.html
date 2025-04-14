@@ -3,19 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gemini AI Chat</title>
+    <title>Sweet Talk - Your Virtual Girlfriend</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <meta name="description" content="A ChatGPT-style interface powered by Gemini AI">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta name="description" content="A virtual girlfriend experience powered by AI">
 </head>
 <body class="light-theme">
     <div class="app-container">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
+                <div class="app-branding">
+                    <i class="fas fa-heart"></i>
+                    <h2>Sweet Talk</h2>
+                </div>
                 <button class="new-chat-btn" id="newChatBtn">
                     <i class="fas fa-plus"></i>
-                    <span>New chat</span>
+                    <span>New conversation</span>
                 </button>
             </div>
             <div class="sidebar-content">
@@ -42,15 +49,20 @@
         <main class="main-content">
             <div class="chat-container" id="chatContainer">
                 <div class="welcome-screen" id="welcomeScreen">
-                    <h1>Gemini AI Chat</h1>
-                    <p>Your ChatGPT-style interface powered by Google's Gemini API</p>
+                    <div class="avatar-container">
+                        <div class="gf-avatar">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                    </div>
+                    <h1>Sweet Talk</h1>
+                    <p>Your virtual girlfriend is ready to chat with you!</p>
                     <div class="example-prompts">
-                        <h3>Try asking:</h3>
+                        <h3>Start with:</h3>
                         <div class="example-grid">
-                            <button class="example-prompt">Explain quantum computing</button>
-                            <button class="example-prompt">Write a poem about technology</button>
-                            <button class="example-prompt">Help me plan a vacation</button>
-                            <button class="example-prompt">Describe the theory of relativity</button>
+                            <button class="example-prompt">Hi, how was your day?</button>
+                            <button class="example-prompt">Tell me something sweet</button>
+                            <button class="example-prompt">I miss you</button>
+                            <button class="example-prompt">What should we do this weekend?</button>
                         </div>
                     </div>
                 </div>
@@ -65,17 +77,26 @@
                     <div class="input-container">
                         <textarea 
                             id="userInput" 
-                            placeholder="Message Gemini..." 
+                            placeholder="Type a message..." 
                             rows="1"
                             required
                         ></textarea>
+                        <button type="button" class="voice-btn" id="voiceBtn" title="Use voice input">
+                            <i class="fas fa-microphone"></i>
+                        </button>
                         <button type="submit" class="send-btn" id="sendBtn">
                             <i class="fas fa-paper-plane"></i>
                         </button>
                     </div>
                 </form>
                 <div class="input-footer">
-                    <p>Gemini may display inaccurate info, including about people, so double-check its responses.</p>
+                    <div class="feature-controls">
+                        <label class="switch">
+                            <input type="checkbox" id="textToSpeechToggle">
+                            <span class="slider round"></span>
+                        </label>
+                        <span>Text to speech</span>
+                    </div>
                 </div>
             </div>
         </main>
@@ -85,11 +106,11 @@
     <div class="modal" id="apiKeyModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Gemini API Settings</h2>
+                <h2>API Settings</h2>
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Enter your Gemini API key to use the chat. You can get an API key from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>. Make sure your API key has access to the Gemini models.</p>
+                <p>Enter your Gemini API key to chat with your virtual girlfriend. You can get an API key from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>.</p>
                 <div class="form-group">
                     <label for="apiKeyInput">API Key:</label>
                     <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key">
@@ -105,6 +126,10 @@
                         <option value="gemini-1.5-flash">gemini-1.5-flash</option>
                         <option value="gemini-pro">gemini-pro</option>
                     </select>
+                </div>
+                <div class="form-group persona-config">
+                    <label for="personaInput">Girlfriend Personality (optional):</label>
+                    <textarea id="personaInput" placeholder="Describe your ideal girlfriend's personality, interests, and speaking style..." rows="3"></textarea>
                 </div>
             </div>
         </div>

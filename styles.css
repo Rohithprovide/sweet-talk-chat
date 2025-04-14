@@ -1,38 +1,38 @@
 :root {
     /* Light theme colors */
-    --light-bg: #ffffff;
-    --light-sidebar-bg: #f7f7f8;
-    --light-chat-bg: #ffffff;
-    --light-text: #343541;
-    --light-secondary-text: #6e6e80;
-    --light-border: #e5e5e5;
-    --light-hover: #f1f1f1;
-    --light-active: #ececf1;
-    --light-bot-message-bg: #f7f7f8;
+    --light-bg: #fff6f9;
+    --light-sidebar-bg: #ffe6ee;
+    --light-chat-bg: #fff6f9;
+    --light-text: #4a4a4a;
+    --light-secondary-text: #8a8a8a;
+    --light-border: #ffd6e6;
+    --light-hover: #ffe6ee;
+    --light-active: #ffc8e0;
+    --light-bot-message-bg: #ffe6ee;
     --light-user-message-bg: #ffffff;
     --light-input-bg: #ffffff;
-    --light-button-bg: #f3f3f3;
-    --light-button-hover: #e5e5e5;
-    --light-button-text: #343541;
-    --light-accent: #10a37f;
+    --light-button-bg: #ffd6e6;
+    --light-button-hover: #ffc8e0;
+    --light-button-text: #4a4a4a;
+    --light-accent: #ff6b9e;
     --light-error: #ff4a4a;
 
     /* Dark theme colors */
-    --dark-bg: #1e1e2e;
-    --dark-sidebar-bg: #202123;
-    --dark-chat-bg: #343541;
-    --dark-text: #ececf1;
-    --dark-secondary-text: #c5c5d2;
-    --dark-border: #4d4d4f;
-    --dark-hover: #2a2a2d;
-    --dark-active: #4d4d4f;
-    --dark-bot-message-bg: #444654;
-    --dark-user-message-bg: #343541;
-    --dark-input-bg: #40414f;
-    --dark-button-bg: #3e3f4b;
-    --dark-button-hover: #535461;
-    --dark-button-text: #ececf1;
-    --dark-accent: #19c37d;
+    --dark-bg: #2d1e2e;
+    --dark-sidebar-bg: #241526;
+    --dark-chat-bg: #312433;
+    --dark-text: #f0e0f4;
+    --dark-secondary-text: #c0a0c8;
+    --dark-border: #53345a;
+    --dark-hover: #3f2b42;
+    --dark-active: #53345a;
+    --dark-bot-message-bg: #4a2e51;
+    --dark-user-message-bg: #312433;
+    --dark-input-bg: #4a2e51;
+    --dark-button-bg: #53345a;
+    --dark-button-hover: #6b4070;
+    --dark-button-text: #f0e0f4;
+    --dark-accent: #ff6b9e;
     --dark-error: #ff6e6e;
 
     /* Default theme (light) */
@@ -156,7 +156,7 @@ body {
 }
 
 .new-chat-btn:hover {
-    background-color: #0f8e6c;
+    background-color: #ff4b8a;
 }
 
 .new-chat-btn i {
@@ -521,7 +521,7 @@ textarea::placeholder {
 }
 
 .send-btn:hover {
-    color: #0f8e6c;
+    color: #ff4b8a;
 }
 
 .send-btn:disabled {
@@ -655,7 +655,7 @@ textarea::placeholder {
 }
 
 .save-api-key:hover {
-    background-color: #0f8e6c;
+    background-color: #ff4b8a;
 }
 
 .model-selection {
