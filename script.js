@@ -458,7 +458,7 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
         };
         
         // Use the model selected by the user
-        const endpoint = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
+        const endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
         
         const requestBody = {
             contents: [
