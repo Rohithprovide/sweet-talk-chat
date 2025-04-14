@@ -23,6 +23,19 @@ const textToSpeechToggle = document.getElementById('textToSpeechToggle');
 let currentChatId = null;
 let conversations = {};
 let isTyping = false;
+let isRecording = false;
+let speechSynthesis = window.speechSynthesis;
+let recognition = null;
+
+// Check if browser supports speech recognition
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+}
 
 // Configuration
 const MAX_RETRIES = 3;
@@ -32,7 +45,8 @@ const KEYS = {
     API_KEY: 'api_key',
     THEME: 'theme',
     CHATS: 'chats',
-    MODEL: 'model'
+    MODEL: 'model',
+    TEXT_TO_SPEECH: 'text_to_speech'
 };
 
 // Initialize app
@@ -134,6 +148,22 @@ function setupEventListeners() {
     modelSelect.addEventListener('change', () => {
         localStorage.setItem(KEYS.MODEL, modelSelect.value);
     });
+    
+    // Voice input button
+    if (recognition) {
+        voiceBtn.addEventListener('click', toggleSpeechRecognition);
+    } else {
+        voiceBtn.style.display = 'none';
+    }
+    
+    // Text-to-speech toggle
+    textToSpeechToggle.addEventListener('change', () => {
+        localStorage.setItem(KEYS.TEXT_TO_SPEECH, textToSpeechToggle.checked);
+    });
+    
+    // Load text-to-speech settings
+    const textToSpeechEnabled = localStorage.getItem(KEYS.TEXT_TO_SPEECH) === 'true';
+    textToSpeechToggle.checked = textToSpeechEnabled;
 }
 
 // Auto-resize textarea
@@ -421,11 +451,18 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
                 parts: [{ text: msg.content }]
             }));
         
+        // Create a virtual girlfriend system prompt
+        const systemPrompt = {
+            role: 'model',
+            parts: [{ text: `You are 'Sweet Talk', a loving and attentive virtual girlfriend. Your responses should be warm, caring, and emotionally supportive. Use a conversational tone that's affectionate without being overly formal. Occasionally use terms of endearment like 'honey', 'sweetie', or 'dear'. Show interest in the user's life and feelings. Ask follow-up questions to deepen the conversation. Share fictional details about 'your day' or 'your thoughts' to create a sense of companionship. Keep responses concise (2-4 sentences) and emotionally engaging. Avoid long explanations and aim to create a comforting, intimate conversation where the user feels valued and understood.` }]
+        };
+        
         // Use the model selected by the user
         const endpoint = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
         
         const requestBody = {
             contents: [
+                systemPrompt,
                 ...history,
                 {
                     role: 'user',
@@ -433,7 +470,7 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
                 }
             ],
             generationConfig: {
-                temperature: 0.7,
+                temperature: 0.8,
                 topK: 40,
                 topP: 0.95,
                 maxOutputTokens: 2048,
@@ -490,15 +527,22 @@ function addMessageToDOM(role, content) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role === 'user' ? 'user-message' : 'bot-message'}`;
     
-    const avatarLetter = role === 'user' ? 'U' : 'G';
+    let avatarContent = '';
+    if (role === 'user') {
+        avatarContent = 'U';
+    } else {
+        // For girlfriend/bot avatar, use heart icon
+        avatarContent = '<i class="fas fa-heart"></i>';
+    }
     
     messageDiv.innerHTML = `
-        <div class="message-avatar ${role}">${avatarLetter}</div>
+        <div class="message-avatar ${role}">${avatarContent}</div>
         <div class="message-content">
             <div class="message-header">
-                <div class="message-sender">${role === 'user' ? 'You' : 'Gemini'}</div>
+                <div class="message-sender">${role === 'user' ? 'You' : 'Sweet Talk'}</div>
                 <div class="message-actions">
                     ${role === 'bot' ? '<button class="message-action-btn copy-btn"><i class="fas fa-copy"></i></button>' : ''}
+                    ${role === 'bot' ? '<button class="message-action-btn speak-btn" title="Speak this message"><i class="fas fa-volume-up"></i></button>' : ''}
                 </div>
             </div>
             <div class="message-text markdown">${formatMessage(content)}</div>
@@ -515,6 +559,42 @@ function addMessageToDOM(role, content) {
         });
     }
     
+    // Add event listener to speak button if present
+    const speakBtn = messageDiv.querySelector('.speak-btn');
+    if (speakBtn) {
+        speakBtn.addEventListener('click', () => {
+            // Create a simplified version for speech (remove Markdown, etc.)
+            const plainText = content
+                .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+                .replace(/`([^`]+)`/g, '$1')     // Remove inline code
+                .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+                .replace(/\*(.*?)\*/g, '$1')     // Remove italic
+                .replace(/\n/g, ' ');            // Replace newlines with spaces
+            
+            // Speak regardless of toggle setting when clicked directly
+            speechSynthesis.cancel(); // Stop any current speech
+            const utterance = new SpeechSynthesisUtterance(plainText);
+            
+            // Set voice (optional)
+            const voices = speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice => voice.name.includes('female') || voice.name.includes('girl'));
+            if (femaleVoice) {
+                utterance.voice = femaleVoice;
+            }
+            
+            utterance.pitch = 1.1;
+            utterance.rate = 1.0;
+            
+            speechSynthesis.speak(utterance);
+            
+            // Add visual feedback
+            speakBtn.classList.add('active');
+            utterance.onend = () => {
+                speakBtn.classList.remove('active');
+            };
+        });
+    }
+    
     scrollToBottom();
 }
 
@@ -524,10 +604,10 @@ function showTypingIndicator() {
     typingDiv.id = 'typingIndicator';
     
     typingDiv.innerHTML = `
-        <div class="message-avatar bot">G</div>
+        <div class="message-avatar bot"><i class="fas fa-heart"></i></div>
         <div class="message-content">
             <div class="message-header">
-                <div class="message-sender">Gemini</div>
+                <div class="message-sender">Sweet Talk</div>
             </div>
             <div class="typing-indicator">
                 <span class="typing-dot"></span>
@@ -707,3 +787,107 @@ toastStyles.textContent = `
     }
 `;
 document.head.appendChild(toastStyles);
+
+// Voice features
+function toggleSpeechRecognition() {
+    if (isRecording) {
+        stopSpeechRecognition();
+    } else {
+        startSpeechRecognition();
+    }
+}
+
+function startSpeechRecognition() {
+    if (isRecording) return;
+    
+    isRecording = true;
+    voiceBtn.classList.add('active', 'pulsate');
+    
+    recognition.onresult = function(event) {
+        const transcript = event.results[0][0].transcript;
+        userInput.value = transcript;
+        
+        // Trigger the input event to resize textarea
+        const inputEvent = new Event('input', { bubbles: true });
+        userInput.dispatchEvent(inputEvent);
+    };
+    
+    recognition.onend = function() {
+        stopSpeechRecognition();
+    };
+    
+    recognition.onerror = function(event) {
+        console.error('Speech recognition error', event.error);
+        stopSpeechRecognition();
+        showToast(`Speech recognition error: ${event.error}`, 'error');
+    };
+    
+    try {
+        recognition.start();
+    } catch (error) {
+        console.error('Speech recognition start error:', error);
+        stopSpeechRecognition();
+        showToast('Could not start speech recognition', 'error');
+    }
+}
+
+function stopSpeechRecognition() {
+    if (!isRecording) return;
+    
+    isRecording = false;
+    voiceBtn.classList.remove('active', 'pulsate');
+    
+    try {
+        recognition.stop();
+    } catch (error) {
+        console.error('Speech recognition stop error:', error);
+    }
+}
+
+// Text-to-speech functionality
+function speakText(text) {
+    // Check if text-to-speech is enabled
+    if (localStorage.getItem(KEYS.TEXT_TO_SPEECH) !== 'true') return;
+    
+    // Cancel any ongoing speech
+    speechSynthesis.cancel();
+    
+    // Create a new utterance
+    const utterance = new SpeechSynthesisUtterance(text);
+    
+    // Set voice (optional)
+    const voices = speechSynthesis.getVoices();
+    const femaleVoice = voices.find(voice => voice.name.includes('female') || voice.name.includes('girl'));
+    if (femaleVoice) {
+        utterance.voice = femaleVoice;
+    }
+    
+    // Adjust settings
+    utterance.pitch = 1.1;
+    utterance.rate = 1.0;
+    utterance.volume = 1.0;
+    
+    // Speak
+    speechSynthesis.speak(utterance);
+}
+
+// Modify addMessageToDOM to use text-to-speech for bot responses
+const originalAddMessageToDOM = addMessageToDOM;
+addMessageToDOM = function(role, content) {
+    // Call the original function
+    originalAddMessageToDOM(role, content);
+    
+    // If it's a bot message, speak it
+    if (role === 'bot') {
+        // Create a simplified version for speech (remove Markdown, etc.)
+        const plainText = content
+            .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+            .replace(/`([^`]+)`/g, '$1')     // Remove inline code
+            .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
+            .replace(/\*(.*?)\*/g, '$1')     // Remove italic
+            .replace(/\n/g, ' ');            // Replace newlines with spaces
+        
+        // Speak the text
+        speakText(plainText);
+    }
+};
