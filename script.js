@@ -155,6 +155,9 @@ function setupEventListeners() {
     // New chat button
     newChatBtn.addEventListener('click', startNewChat);
     
+    // Logo click to go to home screen
+    logoHome.addEventListener('click', showWelcomeScreen);
+    
     // Message form submission
     messageForm.addEventListener('submit', handleMessageSubmit);
     
