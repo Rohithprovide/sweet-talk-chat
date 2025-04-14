@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gemini AI Chat</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <meta name="description" content="A ChatGPT-style interface powered by Gemini AI">
+</head>
+<body class="light-theme">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <button class="new-chat-btn" id="newChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New chat</span>
+                </button>
+            </div>
+            <div class="sidebar-content">
+                <div class="chat-history" id="chatHistory">
+                    <!-- Chat history will be populated here -->
+                </div>
+            </div>
+            <div class="sidebar-footer">
+                <button class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon dark-icon"></i>
+                    <i class="fas fa-sun light-icon"></i>
+                    <span>Toggle theme</span>
+                </button>
+                <div class="api-key-container">
+                    <button class="settings-btn" id="settingsBtn">
+                        <i class="fas fa-gear"></i>
+                        <span>API Settings</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="chat-container" id="chatContainer">
+                <div class="welcome-screen" id="welcomeScreen">
+                    <h1>Gemini AI Chat</h1>
+                    <p>Your ChatGPT-style interface powered by Google's Gemini API</p>
+                    <div class="example-prompts">
+                        <h3>Try asking:</h3>
+                        <div class="example-grid">
+                            <button class="example-prompt">Explain quantum computing</button>
+                            <button class="example-prompt">Write a poem about technology</button>
+                            <button class="example-prompt">Help me plan a vacation</button>
+                            <button class="example-prompt">Describe the theory of relativity</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="messages" id="messagesContainer">
+                    <!-- Messages will be displayed here -->
+                </div>
+            </div>
+
+            <!-- Input Area -->
+            <div class="input-area">
+                <form id="messageForm">
+                    <div class="input-container">
+                        <textarea 
+                            id="userInput" 
+                            placeholder="Message Gemini..." 
+                            rows="1"
+                            required
+                        ></textarea>
+                        <button type="submit" class="send-btn" id="sendBtn">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </form>
+                <div class="input-footer">
+                    <p>Gemini may display inaccurate info, including about people, so double-check its responses.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- API Key Modal -->
+    <div class="modal" id="apiKeyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gemini API Settings</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Enter your Gemini API key to use the chat. You can get an API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                <div class="form-group">
+                    <label for="apiKeyInput">API Key:</label>
+                    <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key">
+                    <button id="toggleApiKeyVisibility" class="toggle-visibility">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <button class="save-api-key" id="saveApiKey">Save Key</button>
+                <div class="model-selection">
+                    <label for="modelSelect">Model:</label>
+                    <select id="modelSelect">
+                        <option value="gemini-pro">gemini-pro</option>
+                        <option value="gemini-pro-vision">gemini-pro-vision</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
