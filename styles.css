@@ -220,14 +220,38 @@ body {
     border-radius: var(--border-radius-md);
     cursor: pointer;
     transition: all var(--transition-fast);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
     position: relative;
     margin-bottom: var(--spacing-xs);
     border-left: 3px solid transparent;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     background-color: rgba(255, 255, 255, 0.5);
+}
+
+.chat-item span {
+    max-width: 85%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    position: relative;
+}
+
+.chat-item span::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 30px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.9) 80%);
+    pointer-events: none;
+}
+
+.chat-item:hover span::after {
+    background: linear-gradient(to right, rgba(245, 245, 250, 0), rgba(245, 245, 250, 0.9) 80%);
+}
+
+.chat-item.active span::after {
+    background: linear-gradient(to right, rgba(243, 242, 255, 0), rgba(243, 242, 255, 0.9) 80%);
 }
 
 .delete-chat-btn {
