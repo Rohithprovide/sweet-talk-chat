@@ -242,10 +242,22 @@ function updateChatHistory() {
             chatItem.innerHTML = `
                 <i class="fas fa-message"></i>
                 <span>${title}</span>
+                <button class="delete-chat-btn" title="Delete chat"><i class="fas fa-trash"></i></button>
             `;
             
-            chatItem.addEventListener('click', () => {
+            chatItem.addEventListener('click', (e) => {
+                // Don't trigger if clicking on the delete button
+                if (e.target.closest('.delete-chat-btn')) {
+                    return;
+                }
                 loadChat(chatId);
+            });
+            
+            // Add delete button functionality
+            const deleteBtn = chatItem.querySelector('.delete-chat-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation(); // Prevent chat from being loaded
+                deleteChat(chatId);
             });
             
             chatHistory.appendChild(chatItem);
@@ -297,6 +309,31 @@ function showWelcomeScreen() {
     welcomeScreen.style.display = 'block';
     messagesContainer.style.display = 'none';
     currentChatId = null;
+}
+
+function deleteChat(chatId) {
+    // If trying to delete current chat
+    if (chatId === currentChatId) {
+        // Load welcome screen if this is the active chat
+        showWelcomeScreen();
+    }
+    
+    // Delete chat from storage
+    delete conversations[chatId];
+    
+    // If this was the last chat id saved, remove it
+    if (localStorage.getItem('lastChatId') === chatId) {
+        localStorage.removeItem('lastChatId');
+    }
+    
+    // Save conversations
+    saveConversations();
+    
+    // Update UI
+    updateChatHistory();
+    
+    // Show toast
+    showToast('Chat deleted successfully');
 }
 
 // Message handling
@@ -382,7 +419,7 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
                 parts: [{ text: msg.content }]
             }));
         
-        // If using Gemini Pro (text-only model)
+        // Use the model selected by the user
         const endpoint = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
         
         const requestBody = {
