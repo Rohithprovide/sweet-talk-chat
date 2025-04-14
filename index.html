@@ -89,7 +89,7 @@
                 <button class="close-modal" id="closeModal">&times;</button>
             </div>
             <div class="modal-body">
-                <p>Enter your Gemini API key to use the chat. You can get an API key from <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>.</p>
+                <p>Enter your Gemini API key to use the chat. You can get an API key from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>. Make sure your API key has access to the Gemini models.</p>
                 <div class="form-group">
                     <label for="apiKeyInput">API Key:</label>
                     <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key">
@@ -101,8 +101,9 @@
                 <div class="model-selection">
                     <label for="modelSelect">Model:</label>
                     <select id="modelSelect">
+                        <option value="gemini-1.5-pro">gemini-1.5-pro</option>
+                        <option value="gemini-1.5-flash">gemini-1.5-flash</option>
                         <option value="gemini-pro">gemini-pro</option>
-                        <option value="gemini-pro-vision">gemini-pro-vision</option>
                     </select>
                 </div>
             </div>

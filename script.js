@@ -340,7 +340,7 @@ async function handleMessageSubmit(e) {
     
     try {
         // Get model name
-        const model = localStorage.getItem(KEYS.MODEL) || 'gemini-pro';
+        const model = localStorage.getItem(KEYS.MODEL) || 'gemini-1.5-pro';
         
         // Send to Gemini API
         const response = await sendMessageToGemini(message, apiKey, model);
@@ -383,7 +383,7 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
             }));
         
         // If using Gemini Pro (text-only model)
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+        const endpoint = `https://generativelanguage.googleapis.com/v1/models/${modelName}:generateContent?key=${apiKey}`;
         
         const requestBody = {
             contents: [
