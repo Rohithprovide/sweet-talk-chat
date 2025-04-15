@@ -533,7 +533,7 @@ body {
 }
 
 .user-message .message-avatar {
-    margin-right: 0;
+    margin-right: 100px;
     margin-left: var(--spacing-md);
 }
 
