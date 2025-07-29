@@ -58,6 +58,7 @@ An intimate chat application powered by Google's Gemini AI, featuring Emma - a s
 - Prefers messaging app interface over ChatGPT-style
 - No settings or configuration needed
 - Emma should match her seductive appearance
+- Dark theme only (no theme switching)
 
 ## Development Notes
 - Currently serving on port 5000 using Python HTTP server

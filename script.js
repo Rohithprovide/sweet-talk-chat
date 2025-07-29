@@ -1,5 +1,4 @@
 // DOM Elements
-const themeToggle = document.getElementById('themeToggle');
 const messagesContainer = document.getElementById('messagesContainer');
 const welcomeScreen = document.getElementById('welcomeScreen');
 const userInput = document.getElementById('userInput');
@@ -53,8 +52,9 @@ document.addEventListener('DOMContentLoaded', init);
 
 // Initialization function
 function init() {
-    // Load saved theme
-    loadTheme();
+    // Set dark theme permanently
+    document.body.classList.add('dark-theme');
+    document.body.classList.remove('light-theme');
     
     // Load single conversation from local storage
     loadConversation();
@@ -75,9 +75,6 @@ function init() {
 
 // Event Listeners setup
 function setupEventListeners() {
-    // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
-    
     // Message form submission
     messageForm.addEventListener('submit', handleMessageSubmit);
     

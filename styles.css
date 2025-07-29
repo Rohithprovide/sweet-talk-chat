@@ -25,18 +25,18 @@
     --dark-accent: #ff6b9e;
     --dark-online: #4caf50;
 
-    /* Default theme (light) */
-    --bg: var(--light-bg);
-    --header-bg: var(--light-header-bg);
-    --messages-bg: var(--light-messages-bg);
-    --text: var(--light-text);
-    --secondary-text: var(--light-secondary-text);
-    --border: var(--light-border);
-    --my-message: var(--light-my-message);
-    --her-message: var(--light-her-message);
-    --input-bg: var(--light-input-bg);
-    --accent: var(--light-accent);
-    --online: var(--light-online);
+    /* Default theme (dark) */
+    --bg: var(--dark-bg);
+    --header-bg: var(--dark-header-bg);
+    --messages-bg: var(--dark-messages-bg);
+    --text: var(--dark-text);
+    --secondary-text: var(--dark-secondary-text);
+    --border: var(--dark-border);
+    --my-message: var(--dark-my-message);
+    --her-message: var(--dark-her-message);
+    --input-bg: var(--dark-input-bg);
+    --accent: var(--dark-accent);
+    --online: var(--dark-online);
 
     /* Typography */
     --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
@@ -164,30 +164,9 @@ body {
     gap: var(--spacing-sm);
 }
 
-.theme-toggle {
-    background: none;
-    border: none;
-    color: var(--secondary-text);
-    cursor: pointer;
-    padding: var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    transition: background-color var(--transition);
-    font-size: 18px;
-}
+/* Theme toggle removed - dark theme only */
 
-.theme-toggle:hover {
-    background-color: var(--border);
-}
-
-.light-theme .dark-icon,
-.dark-theme .light-icon {
-    display: none;
-}
-
-.light-theme .light-icon,
-.dark-theme .dark-icon {
-    display: inline-block;
-}
+/* Theme toggle styles removed - dark theme only */
 
 /* Messages Area */
 .messages-area {
