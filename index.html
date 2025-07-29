@@ -17,7 +17,7 @@
         <!-- Chat Header -->
         <div class="chat-header">
             <div class="girlfriend-info">
-                <div class="girlfriend-avatar">
+                <div class="girlfriend-avatar" onclick="openImageModal()">
                     <img src="attached_assets/Screenshot 2025-07-29 120048_1753770991987.png" alt="Emma" class="avatar-img">
                     <div class="online-status"></div>
                 </div>
@@ -36,7 +36,7 @@
         <div class="messages-area">
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-content">
-                    <div class="emma-photo">
+                    <div class="emma-photo" onclick="openImageModal()">
                         <img src="attached_assets/Screenshot 2025-07-29 120048_1753770991987.png" alt="Emma">
                     </div>
                     <h2>Hey sexy... 😏</h2>
@@ -87,7 +87,15 @@
         </div>
     </div>
 
-
+    <!-- Image Modal -->
+    <div id="imageModal" class="image-modal hidden">
+        <div class="modal-overlay" onclick="closeImageModal()"></div>
+        <div class="modal-content">
+            <button class="modal-close-btn" onclick="closeImageModal()">×</button>
+            <img src="attached_assets/Screenshot 2025-07-29 120048_1753770991987.png" alt="Emma" class="modal-image">
+            <div class="modal-caption">Emma 💕</div>
+        </div>
+    </div>
 
     <script src="api_key.js"></script>
     <script src="script.js"></script>

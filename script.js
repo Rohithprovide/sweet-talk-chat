@@ -992,3 +992,23 @@ function insertEmoji(emoji) {
     emojiPicker.classList.add("hidden");
 }
 
+// Image Modal Functions
+function openImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeImageModal() {
+    const modal = document.getElementById('imageModal');
+    modal.classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Close modal with escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeImageModal();
+    }
+});
+
