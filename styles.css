@@ -185,29 +185,49 @@ body {
 }
 
 .chat-history-btn {
-    background: transparent;
-    border: none;
-    color: var(--text);
-    font-size: 1.2rem;
-    padding: 8px;
-    border-radius: 50%;
+    background: rgba(255, 107, 158, 0.1);
+    border: 1px solid rgba(255, 107, 158, 0.2);
+    color: var(--accent);
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: var(--border-radius-md);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-history-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 158, 0.3), transparent);
+    transition: left 0.5s ease;
 }
 
 .chat-history-btn:hover {
-    background-color: var(--input-bg);
-    color: var(--primary-color);
-    transform: scale(1.1);
+    background: linear-gradient(135deg, var(--accent) 0%, #e6659e 100%);
+    border-color: var(--accent);
+    color: white;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 107, 158, 0.4);
+}
+
+.chat-history-btn:hover:before {
+    left: 100%;
 }
 
 .chat-history-btn:active {
-    transform: scale(0.95);
+    transform: translateY(0) scale(1.02);
+    box-shadow: 0 4px 10px rgba(255, 107, 158, 0.3);
 }
 
 /* Personal Info Modal */
@@ -474,19 +494,50 @@ body {
 }
 
 .logout-btn {
-    background: none;
-    border: none;
-    color: var(--secondary-text);
+    background: rgba(255, 74, 74, 0.1);
+    border: 1px solid rgba(255, 74, 74, 0.2);
+    color: #ff6b6b;
+    font-size: 1.1rem;
+    padding: 10px;
+    border-radius: var(--border-radius-md);
     cursor: pointer;
-    padding: 8px;
-    border-radius: var(--border-radius-sm);
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    position: relative;
+    overflow: hidden;
     margin-left: 8px;
 }
 
+.logout-btn:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 74, 74, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
 .logout-btn:hover {
-    color: var(--accent);
-    background-color: rgba(255, 107, 158, 0.1);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ff4757 100%);
+    border-color: #ff6b6b;
+    color: white;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+}
+
+.logout-btn:hover:before {
+    left: 100%;
+}
+
+.logout-btn:active {
+    transform: translateY(0) scale(1.02);
+    box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
 }
 
 /* Chat History Modal */
