@@ -79,6 +79,12 @@ function init() {
     // Initialize emoji picker
     initializeEmojiPicker();
     
+    // Add click handler for Emma's name to go back to homepage
+    const emmaNameHeader = document.getElementById('emmaNameHeader');
+    if (emmaNameHeader) {
+        emmaNameHeader.addEventListener('click', goBackToWelcomeScreen);
+    }
+    
     // Start with welcome screen if no conversation exists
     if (conversations.messages.length === 0) {
         showWelcomeScreen();
@@ -295,6 +301,18 @@ function showWelcomeScreen() {
     }
     if (messagesContainer) {
         messagesContainer.innerHTML = '';
+    }
+}
+
+// Function to go back to welcome screen (homepage navigation)
+function goBackToWelcomeScreen() {
+    showWelcomeScreen();
+    updateWelcomeMessage();
+    
+    // Clear input field
+    if (userInput) {
+        userInput.value = '';
+        userInput.style.height = 'auto';
     }
 }
 
@@ -998,4 +1016,6 @@ function updateWelcomeMessage() {
         welcomeText.textContent = getRandomSeductiveMessage() + ' 💋';
     }
 }
+
+// Remove duplicate initialization - using existing init function instead
 

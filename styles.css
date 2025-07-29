@@ -160,6 +160,15 @@ body {
     margin-bottom: 2px;
 }
 
+.clickable-name {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.clickable-name:hover {
+    color: var(--primary-color);
+}
+
 .girlfriend-details .status {
     color: var(--secondary-text);
     font-size: var(--font-size-small);
