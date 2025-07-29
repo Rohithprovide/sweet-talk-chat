@@ -61,7 +61,12 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
 
-PORT = 5000
-with socketserver.TCPServer(("0.0.0.0", PORT), MyHTTPRequestHandler) as httpd:
+PORT = int(os.environ.get('PORT', 5000))
+
+# Allow port reuse to avoid "Address already in use" errors
+class ReuseAddrTCPServer(socketserver.TCPServer):
+    allow_reuse_address = True
+
+with ReuseAddrTCPServer(("0.0.0.0", PORT), MyHTTPRequestHandler) as httpd:
     print(f"Server running at http://0.0.0.0:{PORT}/")
     httpd.serve_forever()

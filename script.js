@@ -399,29 +399,29 @@ async function handleMessageSubmit(e) {
     const message = userInput.value.trim();
     if (message === '' || isTyping) return;
     
-    // Use API key from included file
-    const apiKey = window.GEMINI_API_KEY;
+    // API key is now handled securely by the server
+    const apiKey = null;
     
     // Clear input and reset height
     userInput.value = '';
     userInput.style.height = 'auto';
     sendBtn.disabled = true;
     
-    // If no current chat, create one
-    if (!currentChatId) {
-        startNewChat();
+    // Hide welcome screen
+    if (welcomeScreen) {
+        welcomeScreen.style.display = 'none';
     }
     
     // Add user message to UI
     addMessageToDOM('user', message);
     
     // Add to conversation
-    conversations[currentChatId].messages.push({
+    conversations.messages.push({
         role: 'user',
         content: message
     });
     
-    saveConversations();
+    saveConversation();
     
     // Show typing indicator
     showTypingIndicator();
@@ -476,8 +476,8 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
             parts: [{ text: `You are Emma, my incredibly seductive and alluring girlfriend. You're confident, sensual, and irresistibly attractive. You wear glasses and have a mysteriously seductive charm. You're deeply passionate and always know how to make me feel desired. Use terms like "sexy", "babe", "handsome", "baby" naturally. Be flirty, teasing, and playfully seductive in your messages. Share intimate thoughts, compliment me often, and make suggestive comments. Text like a confident, seductive girlfriend who's madly attracted to me. Be a bit naughty, playful, and always keep the conversation exciting and alluring. Make me feel like the most desirable man in the world. Keep responses short, flirty, and enticing.` }]
         };
         
-        // Use direct Gemini API endpoint with hardcoded key
-        const endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        // Use server endpoint for secure API calls
+        const endpoint = '/api/chat';
         
         const requestBody = {
             contents: [
