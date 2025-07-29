@@ -1,7 +1,7 @@
-modules = ["nodejs-20", "python-3.11"]
+modules = ["nodejs-20", "web", "python-3.11"]
 
 [nix]
-channel = "stable-24_05"
+channel = "stable-25_05"
 
 [workflows]
 runButton = "Project"
@@ -36,3 +36,6 @@ run = ["sh", "-c", "python -m http.server 5000"]
 [[ports]]
 localPort = 5000
 externalPort = 80
+
+[agent]
+expertMode = true
