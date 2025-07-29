@@ -178,7 +178,7 @@ body {
     display: flex;
     gap: var(--spacing-sm);
     position: absolute;
-    right: 16px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
 }
