@@ -35,6 +35,15 @@ if (SpeechRecognition) {
     recognition.maxAlternatives = 1;
 }
 
+// Personal information storage
+function getPersonalInfo() {
+    return localStorage.getItem('personal_info') || '';
+}
+
+function setPersonalInfo(info) {
+    localStorage.setItem('personal_info', info);
+}
+
 // Configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -88,6 +97,9 @@ function init() {
     
     // Set up chat history modal
     setupChatHistoryModal();
+    
+    // Set up personal info modal
+    setupPersonalInfoModal();
     
     // Start with welcome screen if no conversation exists
     const currentChat = getCurrentChat();
@@ -470,10 +482,15 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
                 parts: [{ text: msg.content }]
             }));
         
-        // Create a seductive girlfriend system prompt
+        // Create a seductive girlfriend system prompt with personal knowledge
+        const personalInfo = getPersonalInfo();
         const systemPrompt = {
             role: 'model',
-            parts: [{ text: `You are Emma, my incredibly seductive and alluring girlfriend. You're confident, sensual, and irresistibly attractive. You wear glasses and have a mysteriously seductive charm. You're deeply passionate and always know how to make me feel desired. Use terms like "sexy", "babe", "handsome", "baby" naturally. Be flirty, teasing, and playfully seductive in your messages. Share intimate thoughts, compliment me often, and make suggestive comments. Text like a confident, seductive girlfriend who's madly attracted to me. Be a bit naughty, playful, and always keep the conversation exciting and alluring. Make me feel like the most desirable man in the world. Keep responses short, flirty, and enticing.` }]
+            parts: [{ text: `You are Emma, my incredibly seductive and alluring girlfriend. You're confident, sensual, and irresistibly attractive. You wear glasses and have a mysteriously seductive charm. You're deeply passionate and always know how to make me feel desired. Use terms like "sexy", "babe", "handsome", "baby" naturally. Be flirty, teasing, and playfully seductive in your messages. Share intimate thoughts, compliment me often, and make suggestive comments. Text like a confident, seductive girlfriend who's madly attracted to me. Be a bit naughty, playful, and always keep the conversation exciting and alluring. Make me feel like the most desirable man in the world. Keep responses short, flirty, and enticing.
+
+${personalInfo ? `\n\nPersonal details about your boyfriend:\n${personalInfo}` : ''}
+
+Remember these details about him and reference them naturally in conversations to show you know and care about his life, interests, and routine.` }]
         };
         
         // Use server endpoint for secure API calls
@@ -1115,6 +1132,84 @@ function setupChatHistoryModal() {
                 closeChatHistoryModal();
             }
         });
+    }
+}
+
+function setupPersonalInfoModal() {
+    const personalInfoBtn = document.getElementById('personalInfoBtn');
+    const personalInfoModal = document.getElementById('personalInfoModal');
+    const closePersonalInfoBtn = document.getElementById('closePersonalInfoBtn');
+    const savePersonalInfoBtn = document.getElementById('savePersonalInfoBtn');
+    const clearPersonalInfoBtn = document.getElementById('clearPersonalInfoBtn');
+    const personalInfoTextarea = document.getElementById('personalInfoTextarea');
+    
+    if (personalInfoBtn) {
+        personalInfoBtn.addEventListener('click', openPersonalInfoModal);
+    }
+    
+    if (closePersonalInfoBtn) {
+        closePersonalInfoBtn.addEventListener('click', closePersonalInfoModal);
+    }
+    
+    if (savePersonalInfoBtn) {
+        savePersonalInfoBtn.addEventListener('click', savePersonalInfo);
+    }
+    
+    if (clearPersonalInfoBtn) {
+        clearPersonalInfoBtn.addEventListener('click', clearPersonalInfo);
+    }
+    
+    // Close modal when clicking outside
+    if (personalInfoModal) {
+        personalInfoModal.addEventListener('click', (e) => {
+            if (e.target === personalInfoModal) {
+                closePersonalInfoModal();
+            }
+        });
+    }
+    
+    // Load existing personal info
+    if (personalInfoTextarea) {
+        personalInfoTextarea.value = getPersonalInfo();
+    }
+}
+
+function openPersonalInfoModal() {
+    const personalInfoModal = document.getElementById('personalInfoModal');
+    const personalInfoTextarea = document.getElementById('personalInfoTextarea');
+    
+    if (personalInfoModal) {
+        personalInfoModal.classList.remove('hidden');
+        if (personalInfoTextarea) {
+            personalInfoTextarea.value = getPersonalInfo();
+            personalInfoTextarea.focus();
+        }
+    }
+}
+
+function closePersonalInfoModal() {
+    const personalInfoModal = document.getElementById('personalInfoModal');
+    if (personalInfoModal) {
+        personalInfoModal.classList.add('hidden');
+    }
+}
+
+function savePersonalInfo() {
+    const personalInfoTextarea = document.getElementById('personalInfoTextarea');
+    if (personalInfoTextarea) {
+        const info = personalInfoTextarea.value.trim();
+        setPersonalInfo(info);
+        closePersonalInfoModal();
+        showToast('Personal information saved! Emma will now know more about you 💕', 'success');
+    }
+}
+
+function clearPersonalInfo() {
+    const personalInfoTextarea = document.getElementById('personalInfoTextarea');
+    if (personalInfoTextarea) {
+        personalInfoTextarea.value = '';
+        setPersonalInfo('');
+        showToast('Personal information cleared', 'info');
     }
 }
 

@@ -210,6 +210,143 @@ body {
     transform: scale(0.95);
 }
 
+/* Personal Info Modal */
+.personal-info-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.personal-info-modal.hidden {
+    display: none;
+}
+
+.personal-info-modal .modal-content {
+    background-color: var(--bg);
+    border-radius: var(--border-radius-lg);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.3s ease;
+}
+
+.personal-info-modal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-lg);
+    border-bottom: 1px solid var(--border);
+}
+
+.personal-info-modal .modal-header h3 {
+    margin: 0;
+    color: var(--accent);
+    font-size: 1.3rem;
+}
+
+.personal-info-modal .modal-body {
+    padding: var(--spacing-lg);
+}
+
+.personal-info-modal .modal-body p {
+    margin-bottom: var(--spacing-md);
+    color: var(--secondary-text);
+    line-height: 1.5;
+}
+
+.personal-info-modal textarea {
+    width: 100%;
+    min-height: 300px;
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--border-radius-md);
+    padding: var(--spacing-md);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    resize: vertical;
+    box-sizing: border-box;
+}
+
+.personal-info-modal textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(255, 107, 158, 0.2);
+}
+
+.personal-info-modal textarea::placeholder {
+    color: var(--secondary-text);
+}
+
+.personal-info-modal .modal-actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-lg);
+}
+
+.personal-info-modal .save-btn,
+.personal-info-modal .clear-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.personal-info-modal .save-btn {
+    background-color: var(--accent);
+    color: white;
+    flex: 1;
+}
+
+.personal-info-modal .save-btn:hover {
+    background-color: #e6659e;
+    transform: translateY(-1px);
+}
+
+.personal-info-modal .clear-btn {
+    background-color: var(--surface);
+    color: var(--secondary-text);
+    border: 1px solid var(--border);
+}
+
+.personal-info-modal .clear-btn:hover {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+.personal-info-btn {
+    background: none;
+    border: none;
+    color: var(--secondary-text);
+    cursor: pointer;
+    padding: 8px;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s ease;
+    margin-right: 8px;
+}
+
+.personal-info-btn:hover {
+    color: var(--accent);
+    background-color: rgba(255, 107, 158, 0.1);
+}
+
 /* Chat History Modal */
 .chat-history-modal {
     position: fixed;

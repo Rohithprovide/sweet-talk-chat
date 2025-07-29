@@ -27,6 +27,9 @@
                 </div>
             </div>
             <div class="header-actions">
+                <button id="personalInfoBtn" class="personal-info-btn" title="Personal Info">
+                    <i class="fas fa-user-edit"></i>
+                </button>
                 <button id="chatHistoryBtn" class="chat-history-btn" title="Chat History">
                     <i class="fas fa-clock-rotate-left"></i>
                 </button>
@@ -47,6 +50,40 @@
             </div>
             <div class="messages" id="messagesContainer">
                 <!-- Messages will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Personal Info Modal -->
+        <div id="personalInfoModal" class="personal-info-modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Tell Emma About Yourself</h3>
+                    <button id="closePersonalInfoBtn" class="close-modal-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Share your daily routine, interests, hobbies, work, or anything you want Emma to know about you. This helps her have more personal conversations with you.</p>
+                    <textarea id="personalInfoTextarea" placeholder="Tell Emma about your daily routine, interests, work, hobbies, goals, or anything else you want her to know about you...
+
+For example:
+- I work as a software developer
+- I love playing guitar in my free time  
+- I go to the gym every morning at 7am
+- I'm learning Spanish
+- My favorite food is pizza
+- I have a dog named Max"></textarea>
+                    <div class="modal-actions">
+                        <button id="savePersonalInfoBtn" class="save-btn">
+                            <i class="fas fa-heart"></i>
+                            Save Info
+                        </button>
+                        <button id="clearPersonalInfoBtn" class="clear-btn">
+                            <i class="fas fa-trash"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 

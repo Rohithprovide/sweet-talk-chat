@@ -60,6 +60,9 @@ An intimate chat application powered by Google's Gemini AI, featuring Emma - a s
 - Expanded seductive welcome messages array to 50+ messages with emojis (July 29, 2025)
 - Successfully completed migration from Replit Agent to Replit environment (July 29, 2025)
 - Fixed JavaScript issues and ensured proper server-client communication
+- Added personal information system - Emma can now learn about user's routine, interests, and preferences (July 29, 2025)
+- Fixed chat deletion functionality to completely remove chats from history (July 29, 2025)
+- Enhanced error handling and API connectivity with Gemini AI (July 29, 2025)
 
 ## User Preferences
 - Wants seductive, intimate girlfriend experience
