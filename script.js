@@ -265,98 +265,19 @@ function saveConversation() {
 }
 
 function updateChatHistory() {
-    chatHistory.innerHTML = '';
-    
-    Object.keys(conversations).forEach(chatId => {
-        const chat = conversations[chatId];
-        if (chat.messages.length > 0) {
-            const chatItem = document.createElement('div');
-            chatItem.className = `chat-item ${chatId === currentChatId ? 'active' : ''}`;
-            chatItem.dataset.chatId = chatId;
-            
-            // Get the title from the first user message or use a default
-            let title = 'New Conversation';
-            for (const msg of chat.messages) {
-                if (msg.role === 'user') {
-                    title = msg.content.substring(0, 25) + (msg.content.length > 25 ? '...' : '');
-                    break;
-                }
-            }
-            
-            chatItem.innerHTML = `
-                <i class="fas fa-message"></i>
-                <span>${title}</span>
-                <button class="delete-chat-btn" title="Delete chat"><i class="fas fa-trash"></i></button>
-            `;
-            
-            chatItem.addEventListener('click', (e) => {
-                // Don't trigger if clicking on the delete button
-                if (e.target.closest('.delete-chat-btn')) {
-                    return;
-                }
-                loadChat(chatId);
-            });
-            
-            // Add delete button functionality
-            const deleteBtn = chatItem.querySelector('.delete-chat-btn');
-            deleteBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); // Prevent chat from being loaded
-                deleteChat(chatId);
-            });
-            
-            chatHistory.appendChild(chatItem);
-        }
-    });
+    // This function is not needed for single conversation mode
+    // Just return early to avoid errors
+    return;
 }
 
-function loadChat(chatId) {
-    currentChatId = chatId;
-    const chat = conversations[chatId];
-    
-    // Hide welcome screen and show messages
-    welcomeScreen.style.display = 'none';
-    messagesContainer.style.display = 'flex';
-    
-    // Clear messages container
-    messagesContainer.innerHTML = '';
-    
-    // Add all messages
-    chat.messages.forEach(message => {
-        addMessageToDOM(message.role, message.content);
-    });
-    
-    // Update UI to show active chat
-    updateChatHistory();
-    
-    // Save as last chat
-    localStorage.setItem('lastChatId', chatId);
-    
-    // Scroll to bottom
-    scrollToBottom();
-}
-
-function startNewChat() {
-    const chatId = 'chat_' + Date.now();
-    conversations[chatId] = {
-        id: chatId,
-        messages: []
-    };
-    
-    saveConversations();
-    loadChat(chatId);
-    
-    // Focus on input
-    userInput.focus();
-}
-
-function showWelcomeScreen() {
-    welcomeScreen.style.display = 'flex';
-    messagesContainer.style.display = 'none';
-}
-
+// Load messages function for single conversation mode
 function loadMessages() {
-    welcomeScreen.style.display = 'none';
-    messagesContainer.style.display = 'flex';
+    if (!messagesContainer) return;
+    
+    // Hide welcome screen if there are messages
+    if (conversations.messages.length > 0 && welcomeScreen) {
+        welcomeScreen.style.display = 'none';
+    }
     
     // Clear and repopulate messages
     messagesContainer.innerHTML = '';
@@ -367,30 +288,26 @@ function loadMessages() {
     scrollToBottom();
 }
 
-function deleteChat(chatId) {
-    // If trying to delete current chat
-    if (chatId === currentChatId) {
-        // Load welcome screen if this is the active chat
-        showWelcomeScreen();
+// Show welcome screen function
+function showWelcomeScreen() {
+    if (welcomeScreen) {
+        welcomeScreen.style.display = 'flex';
     }
-    
-    // Delete chat from storage
-    delete conversations[chatId];
-    
-    // If this was the last chat id saved, remove it
-    if (localStorage.getItem('lastChatId') === chatId) {
-        localStorage.removeItem('lastChatId');
+    if (messagesContainer) {
+        messagesContainer.innerHTML = '';
     }
-    
-    // Save conversations
-    saveConversations();
-    
-    // Update UI
-    updateChatHistory();
-    
-    // Show toast
-    showToast('Chat deleted successfully');
 }
+
+function deleteChat(chatId) {
+    // For single conversation mode, just clear the conversation
+    conversations = { messages: [] };
+    saveConversation();
+    showWelcomeScreen();
+    updateWelcomeMessage();
+    messagesContainer.style.display = 'none';
+}
+
+// Remove the duplicate deleteChat function - already defined above
 
 // Message handling
 async function handleMessageSubmit(e) {
@@ -788,7 +705,9 @@ function showToast(message, type = 'success') {
 }
 
 function scrollToBottom() {
-    chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
 }
 
 // Add toast styles (since they weren't in the original CSS)
