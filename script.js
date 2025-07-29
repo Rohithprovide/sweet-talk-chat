@@ -502,8 +502,15 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
         });
         
         if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || `API Error: ${response.status}`);
+            let errorMessage = `API Error: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error?.message || errorMessage;
+            } catch (e) {
+                // If response isn't JSON, use status text
+                errorMessage = response.statusText || errorMessage;
+            }
+            throw new Error(errorMessage);
         }
         
         const data = await response.json();

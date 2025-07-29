@@ -30,7 +30,7 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 return
             
             # Prepare the request to Gemini API
-            endpoint = f"https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key={api_key}"
+            endpoint = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
             
             # Forward the request to Gemini API
             req = Request(endpoint, 
@@ -49,9 +49,32 @@ class MyHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(response_data)
             
+        except HTTPError as e:
+            print(f"HTTP Error handling chat request: {e}")
+            error_response = {
+                "error": {
+                    "message": f"Gemini API Error: {e.code} - {e.reason}",
+                    "code": e.code
+                }
+            }
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(error_response).encode('utf-8'))
         except Exception as e:
             print(f"Error handling chat request: {e}")
-            self.send_error(500, f"Internal server error: {str(e)}")
+            error_response = {
+                "error": {
+                    "message": f"Internal server error: {str(e)}",
+                    "code": 500
+                }
+            }
+            self.send_response(500)
+            self.send_header('Content-Type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps(error_response).encode('utf-8'))
     
     def do_OPTIONS(self):
         # Handle CORS preflight requests
