@@ -959,7 +959,7 @@ function initializeEmojiPicker() {
     });
     
     // Load default category
-    loadEmojis("smileys");
+    loadEmojis("hearts");
 }
 
 function loadEmojis(category) {
