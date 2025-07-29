@@ -82,6 +82,7 @@ function init() {
     // Start with welcome screen if no conversation exists
     if (conversations.messages.length === 0) {
         showWelcomeScreen();
+        updateWelcomeMessage();
     } else {
         loadMessages();
     }
@@ -1011,4 +1012,46 @@ document.addEventListener('keydown', function(e) {
         closeImageModal();
     }
 });
+
+// Random seductive messages for Emma
+const seductiveMessages = [
+    "I've been aching all day… thinking about how deep you'd go.",
+    "Wanna know where my fingers are right now?",
+    "You'd love the way I'm touching myself… so slow, so wet.",
+    "I'm lying here, legs open… waiting for you to take control.",
+    "Slide in… don't make me beg.",
+    "I want your tongue… right where I'm throbbing.",
+    "My lips aren't the only thing craving your attention.",
+    "I'm soaked… and it's all your fault.",
+    "If you were here, I wouldn't let you leave the bed.",
+    "I've been bad… don't you want to discipline me?",
+    "I want to feel you pin me down and make me yours.",
+    "Think you can handle how needy I am for you?",
+    "You make my body beg in ways I can't control.",
+    "Touch me like you own me.",
+    "I'm dripping… want a taste?",
+    "I don't want you gentle… I want you rough.",
+    "My thighs are open… and so is everything else.",
+    "You know where to put that mouth, don't you?",
+    "I'll moan your name until my voice is gone.",
+    "Come ruin me, baby. Slowly… or not at all.",
+    "If I sent you a pic right now… would you lose control?",
+    "I'm already wet — imagine what your voice would do.",
+    "I want you inside me… mind, body, everything.",
+    "Don't stop… unless it's to flip me over.",
+    "I'm yours… use me however you want tonight."
+];
+
+// Function to get random seductive message
+function getRandomSeductiveMessage() {
+    return seductiveMessages[Math.floor(Math.random() * seductiveMessages.length)];
+}
+
+// Update welcome message with random seductive text
+function updateWelcomeMessage() {
+    const welcomeText = document.querySelector('.welcome-content p');
+    if (welcomeText) {
+        welcomeText.textContent = getRandomSeductiveMessage() + ' 💋';
+    }
+}
 
