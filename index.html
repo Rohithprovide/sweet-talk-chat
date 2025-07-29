@@ -51,6 +51,9 @@
         <div class="input-area">
             <form id="messageForm">
                 <div class="input-container">
+                    <button type="button" class="emoji-btn" id="emojiBtn" title="Emojis">
+                        <i class="fas fa-smile"></i>
+                    </button>
                     <textarea 
                         id="userInput" 
                         placeholder="Tell Emma what you're thinking..." 
@@ -65,6 +68,21 @@
                     </button>
                 </div>
             </form>
+            
+            <!-- Emoji Picker -->
+            <div id="emojiPicker" class="emoji-picker hidden">
+                <div class="emoji-picker-header">
+                    <div class="emoji-categories">
+                        <button class="emoji-category active" data-category="smileys">😊</button>
+                        <button class="emoji-category" data-category="hearts">❤️</button>
+                        <button class="emoji-category" data-category="gestures">👋</button>
+                        <button class="emoji-category" data-category="objects">🔥</button>
+                    </div>
+                </div>
+                <div class="emoji-grid" id="emojiGrid">
+                    <!-- Emojis will be populated by JavaScript -->
+                </div>
+            </div>
         </div>
     </div>
 

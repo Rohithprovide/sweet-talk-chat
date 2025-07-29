@@ -5,6 +5,9 @@ const userInput = document.getElementById('userInput');
 const messageForm = document.getElementById('messageForm');
 const sendBtn = document.getElementById('sendBtn');
 const voiceBtn = document.getElementById('voiceBtn');
+const emojiBtn = document.getElementById('emojiBtn');
+const emojiPicker = document.getElementById('emojiPicker');
+const emojiGrid = document.getElementById('emojiGrid');
 
 // Simplified voice settings
 let voiceSettings = {
@@ -47,6 +50,14 @@ const KEYS = {
     VOICE_NAME: 'voice_name'
 };
 
+// Emoji data
+const emojiData = {
+    smileys: ['😊', '😂', '🤣', '😍', '🥰', '😘', '😋', '😎', '🤗', '🙂', '😉', '😌', '😏', '🤤', '😴', '🤭', '🤫', '🤔', '🤨', '😐', '😑', '😶', '🙄', '😬', '🤥', '😔', '😪', '🤐', '🤢', '🤮', '🤧', '😷', '🤒', '🤕'],
+    hearts: ['❤️', '💕', '💖', '💗', '💓', '💘', '💝', '💟', '♥️', '💔', '🧡', '💛', '💚', '💙', '💜', '🤎', '🖤', '🤍', '💯', '💢', '💥', '💫', '💦', '💨', '🕳️', '💣', '💬', '👁️‍🗨️', '🗨️', '🗯️', '💭', '💤'],
+    gestures: ['👋', '🤚', '🖐️', '✋', '🖖', '👌', '🤌', '🤏', '✌️', '🤞', '🤟', '🤘', '🤙', '👈', '👉', '👆', '🖕', '👇', '☝️', '👍', '👎', '👊', '✊', '🤛', '🤜', '👏', '🙌', '👐', '🤲', '🤝', '🙏', '✍️', '💅'],
+    objects: ['🔥', '⭐', '🌟', '💫', '✨', '🎉', '🎊', '🎈', '🎁', '🏆', '🥇', '🏅', '⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🥅', '⛳', '🪁', '🏹', '🎣', '🤿', '🥊']
+};
+
 // Initialize app
 document.addEventListener('DOMContentLoaded', init);
 
@@ -65,6 +76,9 @@ function init() {
     // Handle textarea auto resize
     setupTextareaAutoResize();
     
+    // Initialize emoji picker
+    initializeEmojiPicker();
+    
     // Start with welcome screen if no conversation exists
     if (conversations.messages.length === 0) {
         showWelcomeScreen();
@@ -78,12 +92,22 @@ function setupEventListeners() {
     // Message form submission
     messageForm.addEventListener('submit', handleMessageSubmit);
     
+    // Emoji button
+    emojiBtn.addEventListener('click', toggleEmojiPicker);
+    
     // Voice input button
     if (recognition) {
         voiceBtn.addEventListener('click', toggleSpeechRecognition);
     } else {
         voiceBtn.style.display = 'none';
     }
+    
+    // Close emoji picker when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!emojiPicker.contains(e.target) && !emojiBtn.contains(e.target)) {
+            emojiPicker.classList.add('hidden');
+        }
+    });
 }
 
 // Auto-resize textarea
@@ -917,3 +941,54 @@ addMessageToDOM = function(role, content) {
         speakText(plainText);
     }
 };
+
+
+// Emoji Picker Functions
+function initializeEmojiPicker() {
+    // Set up category buttons
+    const categoryButtons = document.querySelectorAll(".emoji-category");
+    categoryButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            // Remove active class from all buttons
+            categoryButtons.forEach(btn => btn.classList.remove("active"));
+            // Add active class to clicked button
+            button.classList.add("active");
+            // Load emojis for selected category
+            loadEmojis(button.dataset.category);
+        });
+    });
+    
+    // Load default category
+    loadEmojis("smileys");
+}
+
+function loadEmojis(category) {
+    const emojis = emojiData[category] || [];
+    emojiGrid.innerHTML = "";
+    
+    emojis.forEach(emoji => {
+        const emojiButton = document.createElement("button");
+        emojiButton.className = "emoji-item";
+        emojiButton.textContent = emoji;
+        emojiButton.addEventListener("click", () => insertEmoji(emoji));
+        emojiGrid.appendChild(emojiButton);
+    });
+}
+
+function toggleEmojiPicker() {
+    emojiPicker.classList.toggle("hidden");
+}
+
+function insertEmoji(emoji) {
+    const cursorPos = userInput.selectionStart;
+    const textBefore = userInput.value.substring(0, cursorPos);
+    const textAfter = userInput.value.substring(cursorPos);
+    
+    userInput.value = textBefore + emoji + textAfter;
+    userInput.focus();
+    userInput.setSelectionRange(cursorPos + emoji.length, cursorPos + emoji.length);
+    
+    // Hide emoji picker after selection
+    emojiPicker.classList.add("hidden");
+}
+
