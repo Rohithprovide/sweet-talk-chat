@@ -121,7 +121,6 @@ body {
     display: flex;
     align-items: center;
     gap: var(--spacing-md);
-    flex: 1;
 }
 
 .girlfriend-avatar {
@@ -178,8 +177,10 @@ body {
 .header-actions {
     display: flex;
     gap: var(--spacing-sm);
-    margin-left: auto;
-    padding-right: 4px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
 .chat-history-btn {
