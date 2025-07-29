@@ -112,10 +112,7 @@ body {
     position: relative;
 }
 
-.chat-header > * {
-    max-width: 1200px;
-    width: 100%;
-}
+/* Removed max-width constraint to allow full width positioning */
 
 .girlfriend-info {
     display: flex;
@@ -178,9 +175,10 @@ body {
     display: flex;
     gap: var(--spacing-sm);
     position: absolute;
-    right: 8px;
+    right: 0px;
     top: 50%;
     transform: translateY(-50%);
+    padding-right: 16px;
 }
 
 .chat-history-btn {
