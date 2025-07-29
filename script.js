@@ -18,7 +18,8 @@ let voiceSettings = {
 };
 
 // State
-let conversations = { messages: [] };
+let conversations = {};
+let currentChatId = 'main_chat';
 let isTyping = false;
 let isRecording = false;
 let speechSynthesis = window.speechSynthesis;
@@ -85,8 +86,12 @@ function init() {
         emmaNameHeader.addEventListener('click', goBackToWelcomeScreen);
     }
     
+    // Set up chat history modal
+    setupChatHistoryModal();
+    
     // Start with welcome screen if no conversation exists
-    if (conversations.messages.length === 0) {
+    const currentChat = getCurrentChat();
+    if (currentChat.messages.length === 0) {
         showWelcomeScreen();
         updateWelcomeMessage();
     } else {
@@ -258,16 +263,40 @@ function getLangName(langCode) {
     return langNames[langCode] || langCode;
 }
 
-// Simple conversation management
+// Enhanced conversation management for multiple chats
 function loadConversation() {
-    const savedChat = localStorage.getItem('emma_conversation');
-    if (savedChat) {
-        conversations = JSON.parse(savedChat);
+    const savedChats = localStorage.getItem('emma_conversations');
+    if (savedChats) {
+        conversations = JSON.parse(savedChats);
+    }
+    
+    // Create main chat if no conversations exist
+    if (Object.keys(conversations).length === 0) {
+        conversations[currentChatId] = {
+            id: currentChatId,
+            title: 'Chat with Emma',
+            messages: [],
+            createdAt: new Date().toISOString(),
+            lastMessageAt: new Date().toISOString()
+        };
+    }
+    
+    // Load last active chat
+    const lastChatId = localStorage.getItem('lastActiveChatId');
+    if (lastChatId && conversations[lastChatId]) {
+        currentChatId = lastChatId;
+    } else {
+        currentChatId = Object.keys(conversations)[0];
     }
 }
 
 function saveConversation() {
-    localStorage.setItem('emma_conversation', JSON.stringify(conversations));
+    localStorage.setItem('emma_conversations', JSON.stringify(conversations));
+    localStorage.setItem('lastActiveChatId', currentChatId);
+}
+
+function getCurrentChat() {
+    return conversations[currentChatId] || { messages: [] };
 }
 
 function updateChatHistory() {
@@ -276,18 +305,21 @@ function updateChatHistory() {
     return;
 }
 
-// Load messages function for single conversation mode
+// Load messages function for multiple chat support
 function loadMessages() {
     if (!messagesContainer) return;
     
+    const currentChat = getCurrentChat();
+    
     // Hide welcome screen if there are messages
-    if (conversations.messages.length > 0 && welcomeScreen) {
+    if (currentChat.messages.length > 0 && welcomeScreen) {
         welcomeScreen.style.display = 'none';
+        messagesContainer.style.display = 'flex';
     }
     
     // Clear and repopulate messages
     messagesContainer.innerHTML = '';
-    conversations.messages.forEach(message => {
+    currentChat.messages.forEach(message => {
         addMessageToDOM(message.role, message.content);
     });
     
@@ -317,11 +349,28 @@ function goBackToWelcomeScreen() {
 }
 
 function deleteChat(chatId) {
-    // For single conversation mode, just clear the conversation
-    conversations = { messages: [] };
+    // Don't delete if it's the only chat
+    if (Object.keys(conversations).length <= 1) {
+        // Just clear the messages instead
+        conversations[chatId].messages = [];
+        conversations[chatId].lastMessageAt = new Date().toISOString();
+        saveConversation();
+        showWelcomeScreen();
+        updateWelcomeMessage();
+        return;
+    }
+    
+    // Delete the chat
+    delete conversations[chatId];
+    
+    // If we deleted the current chat, switch to another one
+    if (chatId === currentChatId) {
+        currentChatId = Object.keys(conversations)[0];
+    }
+    
     saveConversation();
-    showWelcomeScreen();
-    updateWelcomeMessage();
+    loadMessages();
+    updateChatHistoryModal();
     messagesContainer.style.display = 'none';
 }
 
@@ -350,11 +399,19 @@ async function handleMessageSubmit(e) {
     // Add user message to UI
     addMessageToDOM('user', message);
     
-    // Add to conversation
-    conversations.messages.push({
+    // Add to current conversation
+    const currentChat = getCurrentChat();
+    currentChat.messages.push({
         role: 'user',
         content: message
     });
+    
+    // Update chat metadata
+    currentChat.lastMessageAt = new Date().toISOString();
+    if (!currentChat.title || currentChat.title === 'Chat with Emma') {
+        // Set title based on first user message
+        currentChat.title = message.length > 30 ? message.substring(0, 30) + '...' : message;
+    }
     
     saveConversation();
     
@@ -375,11 +432,15 @@ async function handleMessageSubmit(e) {
             // Add AI response to UI
             addMessageToDOM('bot', response);
             
-            // Add to conversation
-            conversations.messages.push({
+            // Add to current conversation
+            const currentChat = getCurrentChat();
+            currentChat.messages.push({
                 role: 'bot',
                 content: response
             });
+            
+            // Update last message time
+            currentChat.lastMessageAt = new Date().toISOString();
             
             saveConversation();
         }
@@ -398,7 +459,8 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
         isTyping = true;
         
         // Get conversation history for context (last 10 messages)
-        const history = conversations.messages
+        const currentChat = getCurrentChat();
+        const history = currentChat.messages
             .slice(-10) // Take last 10 messages
             .map(msg => ({
                 role: msg.role === 'user' ? 'user' : 'model',
@@ -1015,6 +1077,151 @@ function updateWelcomeMessage() {
     if (welcomeText) {
         welcomeText.textContent = getRandomSeductiveMessage() + ' 💋';
     }
+}
+
+// Chat History Modal Functions
+function setupChatHistoryModal() {
+    const chatHistoryBtn = document.getElementById('chatHistoryBtn');
+    const chatHistoryModal = document.getElementById('chatHistoryModal');
+    const closeChatHistoryBtn = document.getElementById('closeChatHistoryBtn');
+    const newChatBtn = document.getElementById('newChatBtn');
+    
+    if (chatHistoryBtn) {
+        chatHistoryBtn.addEventListener('click', openChatHistoryModal);
+    }
+    
+    if (closeChatHistoryBtn) {
+        closeChatHistoryBtn.addEventListener('click', closeChatHistoryModal);
+    }
+    
+    if (newChatBtn) {
+        newChatBtn.addEventListener('click', createNewChat);
+    }
+    
+    // Close modal when clicking outside
+    if (chatHistoryModal) {
+        chatHistoryModal.addEventListener('click', (e) => {
+            if (e.target === chatHistoryModal) {
+                closeChatHistoryModal();
+            }
+        });
+    }
+}
+
+function openChatHistoryModal() {
+    const chatHistoryModal = document.getElementById('chatHistoryModal');
+    if (chatHistoryModal) {
+        chatHistoryModal.classList.remove('hidden');
+        updateChatHistoryModal();
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeChatHistoryModal() {
+    const chatHistoryModal = document.getElementById('chatHistoryModal');
+    if (chatHistoryModal) {
+        chatHistoryModal.classList.add('hidden');
+        document.body.style.overflow = 'auto';
+    }
+}
+
+function updateChatHistoryModal() {
+    const chatHistoryList = document.getElementById('chatHistoryList');
+    if (!chatHistoryList) return;
+    
+    chatHistoryList.innerHTML = '';
+    
+    // Sort chats by last message time
+    const sortedChats = Object.values(conversations).sort((a, b) => 
+        new Date(b.lastMessageAt) - new Date(a.lastMessageAt)
+    );
+    
+    if (sortedChats.length === 0) {
+        chatHistoryList.innerHTML = `
+            <div class="empty-history">
+                <i class="fas fa-comments"></i>
+                <h4>No chats yet</h4>
+                <p>Start a conversation with Emma!</p>
+            </div>
+        `;
+        return;
+    }
+    
+    sortedChats.forEach(chat => {
+        const chatItem = document.createElement('div');
+        chatItem.className = `chat-history-item ${chat.id === currentChatId ? 'active' : ''}`;
+        
+        // Get preview text from last user or bot message
+        let previewText = 'No messages yet';
+        if (chat.messages.length > 0) {
+            const lastMessage = chat.messages[chat.messages.length - 1];
+            previewText = lastMessage.content.length > 100 
+                ? lastMessage.content.substring(0, 100) + '...'
+                : lastMessage.content;
+        }
+        
+        // Format date
+        const date = new Date(chat.lastMessageAt);
+        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+        
+        chatItem.innerHTML = `
+            <div class="chat-title">${chat.title}</div>
+            <div class="chat-preview">${previewText}</div>
+            <div class="chat-date">${formattedDate}</div>
+            <button class="delete-chat-btn" title="Delete chat">
+                <i class="fas fa-trash"></i>
+            </button>
+        `;
+        
+        // Add click handler to load chat
+        chatItem.addEventListener('click', (e) => {
+            if (!e.target.closest('.delete-chat-btn')) {
+                loadChat(chat.id);
+                closeChatHistoryModal();
+            }
+        });
+        
+        // Add delete handler
+        const deleteBtn = chatItem.querySelector('.delete-chat-btn');
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            deleteChat(chat.id);
+        });
+        
+        chatHistoryList.appendChild(chatItem);
+    });
+}
+
+function createNewChat() {
+    const newChatId = 'chat_' + Date.now();
+    conversations[newChatId] = {
+        id: newChatId,
+        title: 'Chat with Emma',
+        messages: [],
+        createdAt: new Date().toISOString(),
+        lastMessageAt: new Date().toISOString()
+    };
+    
+    currentChatId = newChatId;
+    saveConversation();
+    
+    // Show welcome screen for new chat
+    showWelcomeScreen();
+    updateWelcomeMessage();
+    
+    // Close modal and focus input
+    closeChatHistoryModal();
+    if (userInput) {
+        userInput.focus();
+    }
+}
+
+function loadChat(chatId) {
+    if (!conversations[chatId]) return;
+    
+    currentChatId = chatId;
+    saveConversation();
+    loadMessages();
 }
 
 // Remove duplicate initialization - using existing init function instead

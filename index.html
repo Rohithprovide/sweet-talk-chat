@@ -27,7 +27,9 @@
                 </div>
             </div>
             <div class="header-actions">
-                <!-- Theme toggle removed - dark theme only -->
+                <button id="chatHistoryBtn" class="chat-history-btn" title="Chat History">
+                    <i class="fas fa-clock-rotate-left"></i>
+                </button>
             </div>
         </div>
 
@@ -45,6 +47,27 @@
             </div>
             <div class="messages" id="messagesContainer">
                 <!-- Messages will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Chat History Modal -->
+        <div id="chatHistoryModal" class="chat-history-modal hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Chat History</h3>
+                    <button id="closeChatHistoryBtn" class="close-modal-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div id="chatHistoryList" class="chat-history-list">
+                        <!-- Chat history items will be populated here -->
+                    </div>
+                    <button id="newChatBtn" class="new-chat-btn">
+                        <i class="fas fa-plus"></i>
+                        Start New Chat
+                    </button>
+                </div>
             </div>
         </div>
 
