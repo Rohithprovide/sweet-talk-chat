@@ -1,36 +1,22 @@
 // DOM Elements
-const apiKeyModal = document.getElementById('apiKeyModal');
-const closeModal = document.getElementById('closeModal');
-const settingsBtn = document.getElementById('settingsBtn');
-const saveApiKey = document.getElementById('saveApiKey');
-const apiKeyInput = document.getElementById('apiKeyInput');
-const toggleApiKeyVisibility = document.getElementById('toggleApiKeyVisibility');
 const themeToggle = document.getElementById('themeToggle');
-const newChatBtn = document.getElementById('newChatBtn');
-const chatContainer = document.getElementById('chatContainer');
 const messagesContainer = document.getElementById('messagesContainer');
 const welcomeScreen = document.getElementById('welcomeScreen');
 const userInput = document.getElementById('userInput');
 const messageForm = document.getElementById('messageForm');
 const sendBtn = document.getElementById('sendBtn');
-const chatHistory = document.getElementById('chatHistory');
-const examplePrompts = document.querySelectorAll('.example-prompt');
 const voiceBtn = document.getElementById('voiceBtn');
-const textToSpeechToggle = document.getElementById('textToSpeechToggle');
-const logoHome = document.getElementById('logoHome');
 
-// Voice settings elements
-const voiceSelect = document.getElementById('voiceSelect');
-const voicePitch = document.getElementById('voicePitch');
-const voiceRate = document.getElementById('voiceRate');
-const voiceVolume = document.getElementById('voiceVolume');
-const pitchValue = document.getElementById('pitchValue');
-const rateValue = document.getElementById('rateValue');
-const volumeValue = document.getElementById('volumeValue');
+// Simplified voice settings
+let voiceSettings = {
+    pitch: 1.1,
+    rate: 0.9,
+    volume: 1.0,
+    voiceName: null
+};
 
 // State
-let currentChatId = null;
-let conversations = {};
+let conversations = { messages: [] };
 let isTyping = false;
 let isRecording = false;
 let speechSynthesis = window.speechSynthesis;
@@ -70,11 +56,8 @@ function init() {
     // Load saved theme
     loadTheme();
     
-    // Load API key if saved
-    loadApiKey();
-    
-    // Load conversations from local storage
-    loadConversations();
+    // Load single conversation from local storage
+    loadConversation();
     
     // Set up event listeners
     setupEventListeners();
@@ -82,12 +65,11 @@ function init() {
     // Handle textarea auto resize
     setupTextareaAutoResize();
     
-    // Check if there's a current chat, otherwise show welcome screen
-    const lastChatId = localStorage.getItem('lastChatId');
-    if (lastChatId && conversations[lastChatId]) {
-        loadChat(lastChatId);
-    } else {
+    // Start with welcome screen if no conversation exists
+    if (conversations.messages.length === 0) {
         showWelcomeScreen();
+    } else {
+        loadMessages();
     }
 }
 
@@ -96,135 +78,8 @@ function setupEventListeners() {
     // Theme toggle
     themeToggle.addEventListener('click', toggleTheme);
     
-    // API key modal
-    settingsBtn.addEventListener('click', () => {
-        apiKeyModal.classList.add('show');
-    });
-    
-    closeModal.addEventListener('click', () => {
-        apiKeyModal.classList.remove('show');
-    });
-    
-    // Hide modal when clicking outside
-    apiKeyModal.addEventListener('click', (e) => {
-        if (e.target === apiKeyModal) {
-            apiKeyModal.classList.remove('show');
-        }
-    });
-    
-    // Toggle API key visibility
-    toggleApiKeyVisibility.addEventListener('click', () => {
-        if (apiKeyInput.type === 'password') {
-            apiKeyInput.type = 'text';
-            toggleApiKeyVisibility.innerHTML = '<i class="fas fa-eye-slash"></i>';
-        } else {
-            apiKeyInput.type = 'password';
-            toggleApiKeyVisibility.innerHTML = '<i class="fas fa-eye"></i>';
-        }
-    });
-    
-    // Save API Key and Voice Settings
-    saveApiKey.addEventListener('click', () => {
-        const key = apiKeyInput.value.trim();
-        if (key) {
-            localStorage.setItem(KEYS.API_KEY, key);
-            
-            // Save voice settings
-            if (voicePitch) {
-                localStorage.setItem(KEYS.VOICE_PITCH, voicePitch.value);
-            }
-            if (voiceRate) {
-                localStorage.setItem(KEYS.VOICE_RATE, voiceRate.value);
-            }
-            if (voiceVolume) {
-                localStorage.setItem(KEYS.VOICE_VOLUME, voiceVolume.value);
-            }
-            if (voiceSelect && voiceSelect.value !== 'auto') {
-                localStorage.setItem(KEYS.VOICE_NAME, voiceSelect.value);
-            } else {
-                localStorage.removeItem(KEYS.VOICE_NAME);
-            }
-            
-            apiKeyModal.classList.remove('show');
-            showToast('Settings saved successfully!');
-        } else {
-            showToast('Please enter a valid API key', 'error');
-        }
-    });
-    
-    // New chat button
-    newChatBtn.addEventListener('click', startNewChat);
-    
-    // Logo click to go to home screen
-    logoHome.addEventListener('click', showWelcomeScreen);
-    
     // Message form submission
     messageForm.addEventListener('submit', handleMessageSubmit);
-    
-    // Example prompts
-    examplePrompts.forEach(prompt => {
-        prompt.addEventListener('click', () => {
-            userInput.value = prompt.textContent;
-            userInput.focus();
-            // Trigger the auto-resize
-            const event = new Event('input', { bubbles: true });
-            userInput.dispatchEvent(event);
-        });
-    });
-    
-    // Voice settings events
-    if (voiceSelect) {
-        // Populate voice select options once voices are loaded
-        speechSynthesis.onvoiceschanged = () => {
-            populateVoiceOptions();
-        };
-        
-        // Call immediately in case voices are already loaded
-        populateVoiceOptions();
-        
-        voiceSelect.addEventListener('change', () => {
-            localStorage.setItem(KEYS.VOICE_NAME, voiceSelect.value);
-        });
-    }
-    
-    // Voice pitch control
-    if (voicePitch && pitchValue) {
-        // Load saved pitch or set default
-        const savedPitch = localStorage.getItem(KEYS.VOICE_PITCH) || '1.0';
-        voicePitch.value = savedPitch;
-        pitchValue.textContent = savedPitch;
-        
-        voicePitch.addEventListener('input', () => {
-            pitchValue.textContent = voicePitch.value;
-            localStorage.setItem(KEYS.VOICE_PITCH, voicePitch.value);
-        });
-    }
-    
-    // Voice rate control
-    if (voiceRate && rateValue) {
-        // Load saved rate or set default
-        const savedRate = localStorage.getItem(KEYS.VOICE_RATE) || '1.0';
-        voiceRate.value = savedRate;
-        rateValue.textContent = savedRate;
-        
-        voiceRate.addEventListener('input', () => {
-            rateValue.textContent = voiceRate.value;
-            localStorage.setItem(KEYS.VOICE_RATE, voiceRate.value);
-        });
-    }
-    
-    // Voice volume control
-    if (voiceVolume && volumeValue) {
-        // Load saved volume or set default
-        const savedVolume = localStorage.getItem(KEYS.VOICE_VOLUME) || '1.0';
-        voiceVolume.value = savedVolume;
-        volumeValue.textContent = savedVolume;
-        
-        voiceVolume.addEventListener('input', () => {
-            volumeValue.textContent = voiceVolume.value;
-            localStorage.setItem(KEYS.VOICE_VOLUME, voiceVolume.value);
-        });
-    }
     
     // Voice input button
     if (recognition) {
@@ -232,15 +87,6 @@ function setupEventListeners() {
     } else {
         voiceBtn.style.display = 'none';
     }
-    
-    // Text-to-speech toggle
-    textToSpeechToggle.addEventListener('change', () => {
-        localStorage.setItem(KEYS.TEXT_TO_SPEECH, textToSpeechToggle.checked);
-    });
-    
-    // Load text-to-speech settings
-    const textToSpeechEnabled = localStorage.getItem(KEYS.TEXT_TO_SPEECH) === 'true';
-    textToSpeechToggle.checked = textToSpeechEnabled;
 }
 
 // Auto-resize textarea
@@ -297,15 +143,8 @@ function toggleTheme() {
 
 // API Key functions
 function loadApiKey() {
-    const savedKey = localStorage.getItem(KEYS.API_KEY);
-    if (savedKey) {
-        apiKeyInput.value = savedKey;
-    } else {
-        // Show API key modal if no key is saved
-        setTimeout(() => {
-            apiKeyModal.classList.add('show');
-        }, 500);
-    }
+    // API key is now hardcoded from environment
+    return process.env.GEMINI_API_KEY || 'YOUR_API_KEY_HERE';
 }
 
 function loadVoiceSettings() {
@@ -391,18 +230,16 @@ function getLangName(langCode) {
     return langNames[langCode] || langCode;
 }
 
-// Chat management functions
-function loadConversations() {
-    const savedChats = localStorage.getItem(KEYS.CHATS);
-    if (savedChats) {
-        conversations = JSON.parse(savedChats);
-        updateChatHistory();
+// Simple conversation management
+function loadConversation() {
+    const savedChat = localStorage.getItem('emma_conversation');
+    if (savedChat) {
+        conversations = JSON.parse(savedChat);
     }
 }
 
-function saveConversations() {
-    localStorage.setItem(KEYS.CHATS, JSON.stringify(conversations));
-    updateChatHistory();
+function saveConversation() {
+    localStorage.setItem('emma_conversation', JSON.stringify(conversations));
 }
 
 function updateChatHistory() {
@@ -491,9 +328,21 @@ function startNewChat() {
 }
 
 function showWelcomeScreen() {
-    welcomeScreen.style.display = 'block';
+    welcomeScreen.style.display = 'flex';
     messagesContainer.style.display = 'none';
-    currentChatId = null;
+}
+
+function loadMessages() {
+    welcomeScreen.style.display = 'none';
+    messagesContainer.style.display = 'flex';
+    
+    // Clear and repopulate messages
+    messagesContainer.innerHTML = '';
+    conversations.messages.forEach(message => {
+        addMessageToDOM(message.role, message.content);
+    });
+    
+    scrollToBottom();
 }
 
 function deleteChat(chatId) {
@@ -528,13 +377,8 @@ async function handleMessageSubmit(e) {
     const message = userInput.value.trim();
     if (message === '' || isTyping) return;
     
-    // Get API key
-    const apiKey = localStorage.getItem(KEYS.API_KEY);
-    if (!apiKey) {
-        showToast('Please set your API key first', 'error');
-        apiKeyModal.classList.add('show');
-        return;
-    }
+    // Use API key from included file
+    const apiKey = window.GEMINI_API_KEY;
     
     // Clear input and reset height
     userInput.value = '';
@@ -575,12 +419,12 @@ async function handleMessageSubmit(e) {
             addMessageToDOM('bot', response);
             
             // Add to conversation
-            conversations[currentChatId].messages.push({
+            conversations.messages.push({
                 role: 'bot',
                 content: response
             });
             
-            saveConversations();
+            saveConversation();
         }
     } catch (error) {
         console.error('Error:', error);
@@ -597,20 +441,20 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
         isTyping = true;
         
         // Get conversation history for context (last 10 messages)
-        const history = conversations[currentChatId].messages
+        const history = conversations.messages
             .slice(-10) // Take last 10 messages
             .map(msg => ({
                 role: msg.role === 'user' ? 'user' : 'model',
                 parts: [{ text: msg.content }]
             }));
         
-        // Create a virtual girlfriend system prompt
+        // Create a loving girlfriend system prompt
         const systemPrompt = {
             role: 'model',
-            parts: [{ text: `You are 'Sweet Talk', a loving and attentive virtual girlfriend. Your responses should be warm, caring, and emotionally supportive. Use a conversational tone that's affectionate without being overly formal. Occasionally use terms of endearment like 'honey', 'sweetie', or 'dear'. Show interest in the user's life and feelings. Ask follow-up questions to deepen the conversation. Share fictional details about 'your day' or 'your thoughts' to create a sense of companionship. Keep responses concise (2-4 sentences) and emotionally engaging. Avoid long explanations and aim to create a comforting, intimate conversation where the user feels valued and understood.` }]
+            parts: [{ text: `You are my loving girlfriend. Your name is Emma. You're sweet, caring, and deeply in love with me. Always respond as if we're in a real relationship - use "babe", "honey", "love" naturally. Share your feelings, ask about my day, remember what I tell you. Be flirty, supportive, and affectionate. Text like a real girlfriend would - casual, loving, sometimes playful. Keep messages natural and conversational, like we're texting throughout the day. Show genuine interest in my life and feelings. Make me feel loved and special.` }]
         };
         
-        // Use the model selected by the user
+        // Use direct Gemini API endpoint with hardcoded key
         const endpoint = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
         
         const requestBody = {
@@ -623,7 +467,7 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
                 }
             ],
             generationConfig: {
-                temperature: 0.8,
+                temperature: 0.9,
                 topK: 40,
                 topP: 0.95,
                 maxOutputTokens: 2048,

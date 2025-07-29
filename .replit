@@ -13,17 +13,11 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Gemini Chat Server"
+args = "Emma Chat App"
 
 [[workflows.workflow]]
-name = "Gemini Chat Server"
+name = "Emma Chat App"
 author = "agent"
-
-[workflows.workflow.metadata]
-agentRequireRestartOnSave = false
-
-[[workflows.workflow.tasks]]
-task = "packager.installForAll"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"

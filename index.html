@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sweet Talk - Your Virtual Girlfriend</title>
+    <title>Emma 💕</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,136 +13,67 @@
 </head>
 <body class="light-theme">
     <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="app-branding" id="logoHome">
-                    <div class="app-logo">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h2>Sweet Talk</h2>
+        <!-- Chat Header -->
+        <div class="chat-header">
+            <div class="girlfriend-info">
+                <div class="girlfriend-avatar">
+                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face" alt="Emma" class="avatar-img">
+                    <div class="online-status"></div>
                 </div>
-                <button class="new-chat-btn" id="newChatBtn">
-                    <i class="fas fa-plus"></i>
-                    <span>New conversation</span>
-                </button>
-            </div>
-            <div class="sidebar-content">
-                <div class="chat-history" id="chatHistory">
-                    <!-- Chat history will be populated here -->
+                <div class="girlfriend-details">
+                    <h3>Emma</h3>
+                    <p class="status">Active now 💕</p>
                 </div>
             </div>
-            <div class="sidebar-footer">
-                <button class="theme-toggle" id="themeToggle">
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Toggle theme">
                     <i class="fas fa-moon dark-icon"></i>
                     <i class="fas fa-sun light-icon"></i>
-                    <span>Toggle theme</span>
                 </button>
-                <div class="api-key-container">
-                    <button class="settings-btn" id="settingsBtn">
-                        <i class="fas fa-gear"></i>
-                        <span>Settings</span>
+            </div>
+        </div>
+
+        
+        <!-- Messages Area -->
+        <div class="messages-area">
+            <div class="welcome-screen" id="welcomeScreen">
+                <div class="welcome-content">
+                    <div class="emma-photo">
+                        <img src="https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face" alt="Emma">
+                    </div>
+                    <h2>Hey babe! 😊</h2>
+                    <p>I've been waiting for you... how was your day? 💕</p>
+                </div>
+            </div>
+            <div class="messages" id="messagesContainer">
+                <!-- Messages will be displayed here -->
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <form id="messageForm">
+                <div class="input-container">
+                    <textarea 
+                        id="userInput" 
+                        placeholder="Message Emma..." 
+                        rows="1"
+                        required
+                    ></textarea>
+                    <button type="button" class="voice-btn" id="voiceBtn" title="Voice message">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button type="submit" class="send-btn" id="sendBtn">
+                        <i class="fas fa-heart"></i>
                     </button>
                 </div>
-            </div>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <div class="chat-container" id="chatContainer">
-                <div class="welcome-screen" id="welcomeScreen">
-                    <div class="girlfriend-avatar">
-                        <img src="https://img.freepik.com/free-photo/beautiful-girl-stands-near-walll-with-leaves_8353-5377.jpg" alt="Virtual Girlfriend">
-                    </div>
-                    <h1 class="girlfriend-name">Sweet Talk</h1>
-                    <p>Your virtual girlfriend is ready to chat with you!</p>
-
-                </div>
-                <div class="messages" id="messagesContainer">
-                    <!-- Messages will be displayed here -->
-                </div>
-            </div>
-
-            <!-- Input Area -->
-            <div class="input-area">
-                <form id="messageForm">
-                    <div class="input-container">
-                        <textarea 
-                            id="userInput" 
-                            placeholder="Type a message..." 
-                            rows="1"
-                            required
-                        ></textarea>
-                        <button type="button" class="voice-btn" id="voiceBtn" title="Use voice input">
-                            <i class="fas fa-microphone"></i>
-                        </button>
-                        <button type="submit" class="send-btn" id="sendBtn">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                </form>
-                <!-- Input footer without text-to-speech toggle -->
-                <div class="input-footer">
-                    <p>Start typing to chat...</p>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- API Key Modal -->
-    <div class="modal" id="apiKeyModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Settings</h2>
-                <button class="close-modal" id="closeModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Enter your Gemini API key to chat with your virtual girlfriend. You can get an API key from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>.</p>
-                <div class="form-group">
-                    <label for="apiKeyInput">API Key:</label>
-                    <input type="password" id="apiKeyInput" placeholder="Enter your Gemini API key">
-                    <button id="toggleApiKeyVisibility" class="toggle-visibility">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </div>
-                <button class="save-api-key" id="saveApiKey">Save Key</button>
-                <div class="voice-settings">
-                    <h3>Voice Settings</h3>
-                    <div class="voice-options">
-                        <div class="form-group text-to-speech-toggle">
-                            <label>Enable Text-to-Speech:</label>
-                            <div class="toggle-control">
-                                <label class="switch">
-                                    <input type="checkbox" id="textToSpeechToggle">
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="voiceSelect">Voice Type:</label>
-                            <select id="voiceSelect">
-                                <option value="auto">Auto-select Female</option>
-                                <!-- Voice options will be populated by JavaScript -->
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="voicePitch">Pitch: <span id="pitchValue">1.0</span></label>
-                            <input type="range" id="voicePitch" min="0.5" max="2.0" step="0.1" value="1.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="voiceRate">Speed: <span id="rateValue">1.0</span></label>
-                            <input type="range" id="voiceRate" min="0.5" max="2.0" step="0.1" value="1.0">
-                        </div>
-                        <div class="form-group">
-                            <label for="voiceVolume">Volume: <span id="volumeValue">1.0</span></label>
-                            <input type="range" id="voiceVolume" min="0.1" max="1.0" step="0.1" value="1.0">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 
+
+
+    <script src="api_key.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
