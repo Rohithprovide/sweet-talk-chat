@@ -52,6 +52,9 @@ An intimate chat application powered by Google's Gemini AI, featuring Emma - a s
 - Added Emma's seductive personality and custom image
 - Integrated hardcoded API key for seamless experience
 - Simplified to single conversation model
+- Made interface full-width for immersive experience
+- Removed theme toggle, dark theme only
+- Added WhatsApp-style emoji picker with tooltip design
 
 ## User Preferences
 - Wants seductive, intimate girlfriend experience
