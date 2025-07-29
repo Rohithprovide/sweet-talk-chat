@@ -349,29 +349,32 @@ function goBackToWelcomeScreen() {
 }
 
 function deleteChat(chatId) {
-    // Don't delete if it's the only chat
-    if (Object.keys(conversations).length <= 1) {
-        // Just clear the messages instead
-        conversations[chatId].messages = [];
-        conversations[chatId].lastMessageAt = new Date().toISOString();
-        saveConversation();
-        showWelcomeScreen();
-        updateWelcomeMessage();
-        return;
-    }
-    
-    // Delete the chat
+    // Always delete the chat completely
     delete conversations[chatId];
     
-    // If we deleted the current chat, switch to another one
-    if (chatId === currentChatId) {
+    // If we deleted the current chat or if no chats remain, create a new one
+    if (chatId === currentChatId || Object.keys(conversations).length === 0) {
+        // Create a new chat
+        currentChatId = 'main_chat_' + Date.now();
+        conversations[currentChatId] = {
+            id: currentChatId,
+            title: 'Chat with Emma',
+            messages: [],
+            createdAt: new Date().toISOString(),
+            lastMessageAt: new Date().toISOString()
+        };
+        
+        // Show welcome screen for new chat
+        showWelcomeScreen();
+        updateWelcomeMessage();
+    } else {
+        // Switch to another existing chat
         currentChatId = Object.keys(conversations)[0];
+        loadMessages();
     }
     
     saveConversation();
-    loadMessages();
     updateChatHistoryModal();
-    messagesContainer.style.display = 'none';
 }
 
 // Remove the duplicate deleteChat function - already defined above
@@ -1193,6 +1196,10 @@ function updateChatHistoryModal() {
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             deleteChat(chat.id);
+            // Close modal after deletion
+            setTimeout(() => {
+                closeChatHistoryModal();
+            }, 100);
         });
         
         chatHistoryList.appendChild(chatItem);
