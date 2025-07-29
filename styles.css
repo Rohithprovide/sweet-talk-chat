@@ -97,10 +97,8 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    max-width: 800px;
-    margin: 0 auto;
+    width: 100%;
     background-color: var(--messages-bg);
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Chat Header */
@@ -108,10 +106,15 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-md);
     background-color: var(--header-bg);
     border-bottom: 1px solid var(--border);
     position: relative;
+}
+
+.chat-header > * {
+    max-width: 1200px;
+    width: 100%;
 }
 
 .girlfriend-info {
@@ -202,11 +205,13 @@ body {
     align-items: center;
     justify-content: center;
     padding: var(--spacing-xl);
+    width: 100%;
 }
 
 .welcome-content {
     text-align: center;
-    max-width: 300px;
+    max-width: 500px;
+    width: 100%;
 }
 
 .emma-photo {
@@ -239,17 +244,20 @@ body {
 /* Messages */
 .messages {
     flex: 1;
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-md);
     display: flex;
     flex-direction: column;
     gap: var(--spacing-sm);
     overflow-y: auto;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .message {
     display: flex;
     flex-direction: column;
-    max-width: 80%;
+    max-width: 90%;
     margin-bottom: var(--spacing-md);
 }
 
@@ -368,9 +376,15 @@ body {
 
 /* Input Area */
 .input-area {
-    padding: var(--spacing-md) var(--spacing-lg);
+    padding: var(--spacing-md);
     background-color: var(--header-bg);
     border-top: 1px solid var(--border);
+}
+
+.input-area .input-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .input-container {
@@ -492,7 +506,7 @@ body {
     }
     
     .message {
-        max-width: 85%;
+        max-width: 95%;
     }
 }
 
