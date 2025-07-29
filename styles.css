@@ -85,6 +85,8 @@
 body {
     font-family: var(--font-family);
     font-size: var(--font-size-base);
+    background: url('./lips-background.png') repeat;
+    background-size: 300px 300px;
     background-color: var(--bg);
     color: var(--text);
     height: 100vh;
@@ -98,7 +100,8 @@ body {
     flex-direction: column;
     height: 100vh;
     width: 100%;
-    background-color: var(--messages-bg);
+    background-color: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(2px);
 }
 
 /* Chat Header */
