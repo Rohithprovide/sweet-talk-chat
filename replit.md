@@ -14,9 +14,9 @@ An intimate chat application powered by Google's Gemini AI, featuring Emma - a s
 - Emma: Seductive, confident virtual girlfriend with glasses
 - WhatsApp/iMessage style messaging interface
 - Voice input and text-to-speech output
-- Light/dark theme toggle
-- Single conversation persistence
-- Hardcoded API key (no settings needed)
+- Cross-chat memory system - Emma remembers all previous conversations
+- Multiple conversation support with intelligent context switching
+- Hardcoded personal information about Rohith
 - Seductive personality and flirty responses
 
 ## Technical Stack

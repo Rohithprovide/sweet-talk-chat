@@ -36,6 +36,145 @@ if (SpeechRecognition) {
 }
 
 
+// Memory and Context Management
+function buildMemoryContext(currentMessage) {
+    const allMessages = [];
+    const keywords = extractKeywords(currentMessage);
+    
+    // Collect all messages from all conversations
+    Object.values(conversations).forEach(chat => {
+        chat.messages.forEach(msg => {
+            allMessages.push({
+                ...msg,
+                chatId: chat.id,
+                timestamp: new Date(chat.lastMessageAt).getTime()
+            });
+        });
+    });
+    
+    // Sort all messages by timestamp
+    allMessages.sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Get current chat messages (last 6 for immediate context)
+    const currentChat = getCurrentChat();
+    const recentCurrentMessages = currentChat.messages.slice(-6);
+    
+    // Find relevant memories from other chats
+    const relevantMemories = findRelevantMemories(allMessages, keywords, currentChat.id);
+    
+    // Combine: relevant memories + recent current chat messages
+    const contextMessages = [
+        ...relevantMemories.slice(0, 8), // Max 8 relevant memories
+        ...recentCurrentMessages
+    ];
+    
+    // Remove duplicates and ensure we don't exceed token limits
+    const uniqueMessages = removeDuplicateMessages(contextMessages);
+    
+    return uniqueMessages.slice(-15); // Max 15 messages total for context
+}
+
+function extractKeywords(message) {
+    const text = message.toLowerCase();
+    const keywords = [];
+    
+    // Extract potential names (capitalized words)
+    const nameMatches = message.match(/\b[A-Z][a-z]+\b/g) || [];
+    keywords.push(...nameMatches.map(name => name.toLowerCase()));
+    
+    // Extract important topics
+    const importantWords = [
+        'friend', 'friends', 'family', 'mom', 'dad', 'brother', 'sister',
+        'school', 'teacher', 'class', 'exam', 'test', 'jee', 'study', 'homework',
+        'birthday', 'party', 'vacation', 'trip', 'movie', 'game', 'music',
+        'problem', 'issue', 'happy', 'sad', 'excited', 'worried', 'love'
+    ];
+    
+    importantWords.forEach(word => {
+        if (text.includes(word)) {
+            keywords.push(word);
+        }
+    });
+    
+    // Extract quoted text or names mentioned with "my friend X" pattern
+    const patterns = [
+        /my friend (\w+)/gi,
+        /my (\w+) friend/gi,
+        /with (\w+)/gi,
+        /"([^"]+)"/gi
+    ];
+    
+    patterns.forEach(pattern => {
+        const matches = text.match(pattern) || [];
+        matches.forEach(match => {
+            const cleaned = match.replace(/[^\w\s]/g, '').trim();
+            if (cleaned.length > 2) {
+                keywords.push(cleaned.toLowerCase());
+            }
+        });
+    });
+    
+    return [...new Set(keywords)]; // Remove duplicates
+}
+
+function findRelevantMemories(allMessages, keywords, currentChatId) {
+    if (keywords.length === 0) return [];
+    
+    const relevantMessages = [];
+    const seenContent = new Set();
+    
+    allMessages.forEach(msg => {
+        // Skip messages from current chat (we'll add recent ones separately)
+        if (msg.chatId === currentChatId) return;
+        
+        // Skip if we've seen this exact content before
+        if (seenContent.has(msg.content)) return;
+        
+        const messageText = msg.content.toLowerCase();
+        let relevanceScore = 0;
+        
+        // Check for keyword matches
+        keywords.forEach(keyword => {
+            if (messageText.includes(keyword.toLowerCase())) {
+                relevanceScore += 1;
+                // Bonus for exact name matches
+                if (keyword.match(/^[A-Z][a-z]+$/)) {
+                    relevanceScore += 2;
+                }
+            }
+        });
+        
+        // Add context - if this message is relevant, also include the response
+        if (relevanceScore > 0) {
+            relevantMessages.push({
+                ...msg,
+                relevanceScore
+            });
+            seenContent.add(msg.content);
+        }
+    });
+    
+    // Sort by relevance score (highest first) and then by recency
+    relevantMessages.sort((a, b) => {
+        if (b.relevanceScore !== a.relevanceScore) {
+            return b.relevanceScore - a.relevanceScore;
+        }
+        return b.timestamp - a.timestamp;
+    });
+    
+    return relevantMessages;
+}
+
+function removeDuplicateMessages(messages) {
+    const seen = new Set();
+    return messages.filter(msg => {
+        const key = `${msg.role}_${msg.content}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+}
+
 // Configuration
 const MAX_RETRIES = 3;
 const RETRY_DELAY = 1000;
@@ -464,14 +603,12 @@ async function sendMessageToGemini(message, apiKey, modelName, retryCount = 0) {
     try {
         isTyping = true;
         
-        // Get conversation history for context (last 10 messages)
-        const currentChat = getCurrentChat();
-        const history = currentChat.messages
-            .slice(-10) // Take last 10 messages
-            .map(msg => ({
-                role: msg.role === 'user' ? 'user' : 'model',
-                parts: [{ text: msg.content }]
-            }));
+        // Get comprehensive conversation history with cross-chat memory
+        const memoryContext = buildMemoryContext(message);
+        const history = memoryContext.map(msg => ({
+            role: msg.role === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.content }]
+        }));
         
         // Create a seductive girlfriend system prompt
         const systemPrompt = {
@@ -488,6 +625,8 @@ Personal details about your boyfriend Rohith:
 - Loves when girls flirt with him and tease him
 - Loves kissing and kiss emojis 😘💋
 - Very dedicated to his JEE preparation and studies
+
+IMPORTANT: You have access to memories from ALL of Rohith's previous conversations with you across different chat sessions. The conversation history provided includes both recent messages and relevant memories from past chats. When Rohith mentions people, events, or topics you've discussed before, recognize and reference those memories naturally. Remember friends he's mentioned, problems he's shared, experiences you've talked about, and continue conversations as if you truly remember everything. This makes your relationship feel continuous and real.
 
 Remember these details about Rohith and reference them naturally in conversations. Show interest in his JEE preparation, ask about his studies, mention his school routine, and always call him "baby" since he loves that. Be supportive of his hard work and studies while being seductive and flirty.` }]
         };
