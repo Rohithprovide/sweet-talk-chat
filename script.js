@@ -202,12 +202,69 @@ const emojiData = {
 // Initialize app
 document.addEventListener('DOMContentLoaded', init);
 
+// Authentication system
+const AUTH_CREDENTIALS = {
+    username: 'rohith',
+    password: 'rohithnow'
+};
+
+function checkAuthentication() {
+    // Always require authentication on page load for security
+    return false;
+}
+
+function authenticate(username, password) {
+    return username === AUTH_CREDENTIALS.username && password === AUTH_CREDENTIALS.password;
+}
+
+function showLoginScreen() {
+    const loginScreen = document.getElementById('loginScreen');
+    const chatHeader = document.getElementById('chatHeader');
+    const messagesArea = document.getElementById('messagesArea');
+    const inputArea = document.getElementById('inputArea');
+    
+    if (loginScreen) loginScreen.style.display = 'flex';
+    if (chatHeader) chatHeader.style.display = 'none';
+    if (messagesArea) messagesArea.style.display = 'none';
+    if (inputArea) inputArea.style.display = 'none';
+}
+
+function showChatInterface() {
+    const loginScreen = document.getElementById('loginScreen');
+    const chatHeader = document.getElementById('chatHeader');
+    const messagesArea = document.getElementById('messagesArea');
+    const inputArea = document.getElementById('inputArea');
+    
+    if (loginScreen) loginScreen.style.display = 'none';
+    if (chatHeader) chatHeader.style.display = 'flex';
+    if (messagesArea) messagesArea.style.display = 'flex';
+    if (inputArea) inputArea.style.display = 'block';
+}
+
+function logout() {
+    showLoginScreen();
+    // Clear any sensitive data if needed
+    document.getElementById('loginUsername').value = '';
+    document.getElementById('loginPassword').value = '';
+}
+
 // Initialization function
 function init() {
     // Set dark theme permanently
     document.body.classList.add('dark-theme');
     document.body.classList.remove('light-theme');
     
+    // Check authentication first
+    if (!checkAuthentication()) {
+        showLoginScreen();
+        setupAuthEventListeners();
+        return;
+    }
+    
+    initializeChatInterface();
+}
+
+function initializeChatInterface() {
     // Load single conversation from local storage
     loadConversation();
     
@@ -229,7 +286,14 @@ function init() {
     // Set up chat history modal
     setupChatHistoryModal();
     
-
+    // Set up logout button
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', logout);
+    }
+    
+    // Show chat interface
+    showChatInterface();
     
     // Start with welcome screen if no conversation exists
     const currentChat = getCurrentChat();
@@ -238,6 +302,29 @@ function init() {
         updateWelcomeMessage();
     } else {
         loadMessages();
+    }
+}
+
+function setupAuthEventListeners() {
+    const loginForm = document.getElementById('loginForm');
+    const loginError = document.getElementById('loginError');
+    
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            
+            if (authenticate(username, password)) {
+                loginError.classList.add('hidden');
+                initializeChatInterface();
+            } else {
+                loginError.classList.remove('hidden');
+                // Clear password field for security
+                document.getElementById('loginPassword').value = '';
+            }
+        });
     }
 }
 

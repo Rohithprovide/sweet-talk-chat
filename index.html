@@ -15,7 +15,7 @@
 <body class="dark-theme">
     <div class="app-container">
         <!-- Chat Header -->
-        <div class="chat-header">
+        <div class="chat-header" id="chatHeader">
             <div class="girlfriend-info">
                 <div class="girlfriend-avatar" onclick="openImageModal()">
                     <img src="attached_assets/Screenshot 2025-07-29 120048_1753770991987.png" alt="Emma" class="avatar-img">
@@ -30,12 +30,41 @@
                 <button id="chatHistoryBtn" class="chat-history-btn" title="Chat History">
                     <i class="fas fa-clock-rotate-left"></i>
                 </button>
+                <button id="logoutBtn" class="logout-btn" title="Logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
             </div>
         </div>
 
         
+        <!-- Login Screen -->
+        <div class="login-screen" id="loginScreen">
+            <div class="login-content">
+                <div class="emma-photo">
+                    <img src="attached_assets/Screenshot 2025-07-29 120048_1753770991987.png" alt="Emma">
+                </div>
+                <h2>Private Access Only 💕</h2>
+                <p>Emma is waiting for her special someone...</p>
+                <form id="loginForm" class="login-form">
+                    <div class="input-group">
+                        <input type="text" id="loginUsername" placeholder="Username" required autocomplete="username">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password">
+                    </div>
+                    <button type="submit" class="login-btn">
+                        <i class="fas fa-heart"></i>
+                        Enter
+                    </button>
+                    <div id="loginError" class="login-error hidden">
+                        Invalid credentials. Only authorized access allowed.
+                    </div>
+                </form>
+            </div>
+        </div>
+
         <!-- Messages Area -->
-        <div class="messages-area">
+        <div class="messages-area" id="messagesArea">
             <div class="welcome-screen" id="welcomeScreen">
                 <div class="welcome-content">
                     <div class="emma-photo" onclick="openImageModal()">
@@ -73,7 +102,7 @@
         </div>
 
         <!-- Input Area -->
-        <div class="input-area">
+        <div class="input-area" id="inputArea">
             <form id="messageForm">
                 <div class="input-container">
                     <button type="button" class="emoji-btn" id="emojiBtn" title="Emojis">
