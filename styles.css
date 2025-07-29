@@ -566,9 +566,9 @@ body {
 .welcome-screen {
     flex: 1;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    padding: var(--spacing-xl);
+    padding: 120px var(--spacing-xl) var(--spacing-xl);
     width: 100%;
 }
 
