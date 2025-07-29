@@ -1039,7 +1039,32 @@ const seductiveMessages = [
     "I'm already wet — imagine what your voice would do.",
     "I want you inside me… mind, body, everything.",
     "Don't stop… unless it's to flip me over.",
-    "I'm yours… use me however you want tonight."
+    "I'm yours… use me however you want tonight.",
+    "I can't stop replaying our last moment together… 😘",
+    "Every second without you feels like forever… come back to me. 💋",
+    "I've been craving your attention all day long… 😏",
+    "Guess who's been daydreaming about your touch? 😌",
+    "I'm all dressed up… just for you. 😈",
+    "The only thing missing right now… is you. 🫦",
+    "I hope you're ready to be spoiled tonight… 💖",
+    "You've been running through my mind nonstop, baby. 😍",
+    "I was good today… but only because I was saving the bad for you. 🔥",
+    "I need you. Right. Now. 🥵",
+    "Are you thinking what I'm thinking? Because I'm blushing already. 🙈",
+    "I just caught myself whispering your name… again. 💭",
+    "If I told you what I'm wearing right now… would you come closer? 👙",
+    "You've got me wrapped around your finger, don't you? 🫣",
+    "I was just imagining you... right here next to me. 🛏️",
+    "I've been naughty... wanna hear what I did? 😇",
+    "You've got no idea what you do to me. 🫦",
+    "All this heat and it's not even the weather... ☀️🔥",
+    "I'm ready when you are… just say the word. 🫢",
+    "Thinking of all the ways I could tease you tonight... 🥰",
+    "Tell me your secrets... or I'll whisper mine first. 💌",
+    "You should be here... helping me misbehave. 😈",
+    "I want your hands… exactly where they shouldn't be. 🖤",
+    "I lit a candle… and set the mood. Just for us. 🕯️",
+    "Say my name. I want to hear it from your lips. 💬"
 ];
 
 // Function to get random seductive message

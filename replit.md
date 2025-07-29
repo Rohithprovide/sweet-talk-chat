@@ -42,19 +42,21 @@ An intimate chat application powered by Google's Gemini AI, featuring Emma - a s
 - Short, enticing responses
 
 ## Security Considerations
-- API key hardcoded from environment variables
-- Direct API calls to Google Gemini (HTTPS)
-- Client-side only - no server-side processing
+- API key now securely handled by server-side Python application
+- Client-server separation with secure API proxy
+- No API key exposure on client side
+- HTTPS communication to Google Gemini API through server
 
 ## Recent Changes
 - Complete UI transformation from ChatGPT-like to messaging app (July 29, 2025)
 - Removed sidebar, modals, and complex settings
 - Added Emma's seductive personality and custom image
-- Integrated hardcoded API key for seamless experience
+- Migrated from hardcoded API key to secure server-side handling (July 29, 2025)
 - Simplified to single conversation model
 - Made interface full-width for immersive experience
 - Removed theme toggle, dark theme only
 - Added WhatsApp-style emoji picker with tooltip design
+- Expanded seductive welcome messages array to 50+ messages with emojis (July 29, 2025)
 
 ## User Preferences
 - Wants seductive, intimate girlfriend experience
